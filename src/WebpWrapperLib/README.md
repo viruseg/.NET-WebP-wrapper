@@ -1,0 +1,1 @@
+﻿This package is designed for .NET 9. Includes the latest version of the library libwebp.dll versions 1.5.0. Windows x64.

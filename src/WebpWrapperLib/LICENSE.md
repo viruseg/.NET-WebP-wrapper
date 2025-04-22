@@ -1,4 +1,4 @@
-MIT License
+﻿MIT License
 
 Copyright (c) 2020 Jose M. Piñeiro
 Copyright (c) 2025 Denis Tulupov

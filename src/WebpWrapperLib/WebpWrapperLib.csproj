@@ -1,0 +1,63 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>WebpWrapperLib</RootNamespace>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <TargetFramework>net9.0</TargetFramework>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageId>Webp-Wrapper-for-NET-Win-x64</PackageId>
+        <Title>.NET WebP wrapper.Win-x64</Title>
+        <Copyright>Copyright (c) 2025 Denis Tulupov</Copyright>
+        <Authors>Denis Tulupov</Authors>
+        <PackageProjectUrl>https://github.com/viruseg/.NET-WebP-wrapper</PackageProjectUrl>
+        <PackageLicense>LICENSE.md</PackageLicense>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <Description>Wrapper for libwebp in C#. The most complete wrapped in pure managed C#. Exposes Simple Decoding API, Simple Encoding API, Advanced Encoding API (with statistics of compression), Get version library and WebPGetFeatures (info of any WebP file). The wrapper work only 64 bit system.</Description>
+        <RepositoryUrl>https://github.com/viruseg/.NET-WebP-wrapper</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>webp, webp wrapper, csharp, c-sharp, C#,</PackageTags>
+        <PackageReleaseNotes>1.0:
+            .NET 9.0, libwebp.dll v1.5.0
+        </PackageReleaseNotes>
+        <Version>1.0.0</Version>
+        <AssemblyVersion>1.0.0</AssemblyVersion>
+        <PackageIcon>logo.png</PackageIcon>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+        <PlatformTarget>x64</PlatformTarget>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <PlatformTarget>x64</PlatformTarget>
+        <DocumentationFile>bin\Release\WebpWrapperLib.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="System.Drawing.Common" Version="9.0.3"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="runtimes\win-x64\native\libsharpyuv.dll">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+          <Pack>true</Pack>
+          <PackagePath>runtimes\win-x64\native\</PackagePath>
+        </None>
+        <None Update="runtimes\win-x64\native\libwebp.dll">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+          <Pack>true</Pack>
+          <PackagePath>runtimes\win-x64\native\</PackagePath>
+        </None>
+        <None Include="..\..\logo.png">
+          <Pack>True</Pack>
+          <PackagePath></PackagePath>
+          <Link>logo.png</Link>
+        </None>
+        <None Update="README.md" pack="true" PackagePath="." />
+        <None Update="LICENSE.md" pack="true" PackagePath="." />
+    </ItemGroup>
+
+</Project>
