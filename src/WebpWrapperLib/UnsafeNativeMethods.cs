@@ -265,9 +265,8 @@ internal static partial class UnsafeNativeMethods
         return WebPInitDecoderConfigInternal_x64(ref webPDecoderConfig, WEBP_DECODER_ABI_VERSION);
     }
 
-    [LibraryImport(@"runtimes\win-x64\native\libwebp.dll", EntryPoint = "WebPInitDecoderConfigInternal")]
-    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
-    private static partial int WebPInitDecoderConfigInternal_x64(ref WebPDecoderConfig webPDecoderConfig, int WEBP_DECODER_ABI_VERSION);
+    [DllImport("WebpLib/libwebp_x64.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPInitDecoderConfigInternal")]
+    private static extern int WebPInitDecoderConfigInternal_x64(ref WebPDecoderConfig webPDecoderConfig, int WEBP_DECODER_ABI_VERSION);
 
     /// <summary>Decodes the full data at once, taking configuration into account</summary>
     /// <param name="data">WebP raw data to decode</param>
@@ -279,9 +278,8 @@ internal static partial class UnsafeNativeMethods
         return WebPDecode_x64(data, (UIntPtr) data_size, ref webPDecoderConfig);
     }
 
-    [LibraryImport(@"runtimes\win-x64\native\libwebp.dll", EntryPoint = "WebPDecode")]
-    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
-    private static partial VP8StatusCode WebPDecode_x64(IntPtr data, UIntPtr data_size, ref WebPDecoderConfig config);
+    [DllImport("WebpLib/libwebp_x64.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPDecode")]
+    private static extern VP8StatusCode WebPDecode_x64(IntPtr data, UIntPtr data_size, ref WebPDecoderConfig config);
 
     /// <summary>Free any memory associated with the buffer. Must always be called last. Doesn't free the 'buffer' structure itself</summary>
     /// <param name="buffer">WebPDecBuffer</param>
@@ -389,7 +387,6 @@ internal static partial class UnsafeNativeMethods
         return WebPPictureDistortion_x64(ref srcPicture, ref refPicture, metric_type, pResult);
     }
 
-    [LibraryImport(@"runtimes\win-x64\native\libwebp.dll", EntryPoint = "WebPPictureDistortion")]
-    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
-    private static partial int WebPPictureDistortion_x64(ref WebPPicture srcPicture, ref WebPPicture refPicture, int metric_type, IntPtr pResult);
+    [DllImport("WebpLib/libwebp.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPPictureDistortion")]
+    private static extern int WebPPictureDistortion_x64(ref WebPPicture srcPicture, ref WebPPicture refPicture, int metric_type, IntPtr pResult);
 }
