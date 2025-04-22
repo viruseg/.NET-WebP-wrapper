@@ -265,7 +265,7 @@ internal static partial class UnsafeNativeMethods
         return WebPInitDecoderConfigInternal_x64(ref webPDecoderConfig, WEBP_DECODER_ABI_VERSION);
     }
 
-    [DllImport("WebpLib/libwebp_x64.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPInitDecoderConfigInternal")]
+    [DllImport("WebpLib/libwebp.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPInitDecoderConfigInternal")]
     private static extern int WebPInitDecoderConfigInternal_x64(ref WebPDecoderConfig webPDecoderConfig, int WEBP_DECODER_ABI_VERSION);
 
     /// <summary>Decodes the full data at once, taking configuration into account</summary>
@@ -278,7 +278,7 @@ internal static partial class UnsafeNativeMethods
         return WebPDecode_x64(data, (UIntPtr) data_size, ref webPDecoderConfig);
     }
 
-    [DllImport("WebpLib/libwebp_x64.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPDecode")]
+    [DllImport("WebpLib/libwebp.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPDecode")]
     private static extern VP8StatusCode WebPDecode_x64(IntPtr data, UIntPtr data_size, ref WebPDecoderConfig config);
 
     /// <summary>Free any memory associated with the buffer. Must always be called last. Doesn't free the 'buffer' structure itself</summary>
