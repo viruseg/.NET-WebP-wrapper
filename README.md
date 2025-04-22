@@ -2,6 +2,10 @@ This fork is intended for current versions of .NET. Includes the latest version 
 
 The wrapper work only 64 bit system.
 
+|Package|Download|
+|-|-|
+|Webp-Wrapper-for-NET-Win-x64|[![NuGet](https://img.shields.io/nuget/v/Webp-Wrapper-for-NET-Win-x64.svg)](https://www.nuget.org/packages/Webp-Wrapper-for-NET-Win-x64)
+
 # WebP-wrapper
 Wrapper for libwebp in C#. The most complete wrapper in pure managed C#.
 
