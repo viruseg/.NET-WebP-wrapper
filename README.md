@@ -6,6 +6,10 @@ The wrapper work only 64 bit system.
 |-|-|
 |Webp-Wrapper-for-NET-Win-x64|[![NuGet](https://img.shields.io/nuget/v/Webp-Wrapper-for-NET-Win-x64.svg)](https://www.nuget.org/packages/Webp-Wrapper-for-NET-Win-x64)
 
+```bash
+dotnet add package Webp-Wrapper-for-NET-Win-x64
+```
+
 # WebP-wrapper
 Wrapper for libwebp in C#. The most complete wrapper in pure managed C#.
 
