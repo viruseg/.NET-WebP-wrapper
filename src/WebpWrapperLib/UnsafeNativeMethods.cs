@@ -30,7 +30,7 @@ internal static partial class UnsafeNativeMethods
         return IntPtr.Size switch
         {
             8 => WebPConfigInitInternal_x64(ref config, preset, quality, WEBP_DECODER_ABI_VERSION),
-            _ => throw new InvalidOperationException("Invalid platform. Can not find proper function")
+            _ => ThrowHelper.ThrowInvalidPlatformException()
         };
     }
 
@@ -48,7 +48,7 @@ internal static partial class UnsafeNativeMethods
         return IntPtr.Size switch
         {
             8 => WebPGetFeaturesInternal_x64(rawWebP, (UIntPtr) data_size, ref features, WEBP_DECODER_ABI_VERSION),
-            _ => throw new InvalidOperationException("Invalid platform. Can not find proper function")
+            _ => (VP8StatusCode) ThrowHelper.ThrowInvalidPlatformException()
         };
     }
 
@@ -65,7 +65,7 @@ internal static partial class UnsafeNativeMethods
         return IntPtr.Size switch
         {
             8 => WebPConfigLosslessPreset_x64(ref config, level),
-            _ => throw new InvalidOperationException("Invalid platform. Can not find proper function")
+            _ => ThrowHelper.ThrowInvalidPlatformException()
         };
     }
 
@@ -81,7 +81,7 @@ internal static partial class UnsafeNativeMethods
         return IntPtr.Size switch
         {
             8 => WebPValidateConfig_x64(ref config),
-            _ => throw new InvalidOperationException("Invalid platform. Can not find proper function")
+            _ => ThrowHelper.ThrowInvalidPlatformException()
         };
     }
 
@@ -97,7 +97,7 @@ internal static partial class UnsafeNativeMethods
         return IntPtr.Size switch
         {
             8 => WebPPictureInitInternal_x64(ref wpic, WEBP_DECODER_ABI_VERSION),
-            _ => throw new InvalidOperationException("Invalid platform. Can not find proper function")
+            _ => ThrowHelper.ThrowInvalidPlatformException()
         };
     }
 
@@ -114,7 +114,7 @@ internal static partial class UnsafeNativeMethods
         return IntPtr.Size switch
         {
             8 => WebPPictureImportBGR_x64(ref wpic, bgr, stride),
-            _ => throw new InvalidOperationException("Invalid platform. Can not find proper function")
+            _ => ThrowHelper.ThrowInvalidPlatformException()
         };
     }
 
@@ -131,7 +131,7 @@ internal static partial class UnsafeNativeMethods
         return IntPtr.Size switch
         {
             8 => WebPPictureImportBGRA_x64(ref wpic, bgra, stride),
-            _ => throw new InvalidOperationException("Invalid platform. Can not find proper function")
+            _ => ThrowHelper.ThrowInvalidPlatformException()
         };
     }
 
@@ -148,7 +148,7 @@ internal static partial class UnsafeNativeMethods
         return IntPtr.Size switch
         {
             8 => WebPPictureImportBGRX_x64(ref wpic, bgr, stride),
-            _ => throw new InvalidOperationException("Invalid platform. Can not find proper function")
+            _ => ThrowHelper.ThrowInvalidPlatformException()
         };
     }
 
@@ -172,7 +172,7 @@ internal static partial class UnsafeNativeMethods
         return IntPtr.Size switch
         {
             8 => WebPEncode_x64(ref config, ref picture),
-            _ => throw new InvalidOperationException("Invalid platform. Can not find proper function")
+            _ => ThrowHelper.ThrowInvalidPlatformException()
         };
     }
 
@@ -188,7 +188,7 @@ internal static partial class UnsafeNativeMethods
         switch (IntPtr.Size)
         {
             case 8: WebPPictureFree_x64(ref picture); break;
-            default: throw new InvalidOperationException("Invalid platform. Can not find proper function");
+            default: ThrowHelper.ThrowInvalidPlatformException(); break;
         }
     }
 
@@ -203,11 +203,16 @@ internal static partial class UnsafeNativeMethods
     /// <returns>1 if success, otherwise error code returned in the case of (a) formatting error(s).</returns>
     internal static int WebPGetInfo(IntPtr data, int data_size, out int width, out int height)
     {
-        return IntPtr.Size switch
+        switch (IntPtr.Size)
         {
-            8 => WebPGetInfo_x64(data, (UIntPtr) data_size, out width, out height),
-            _ => throw new InvalidOperationException("Invalid platform. Can not find proper function")
-        };
+            case 8:
+                return WebPGetInfo_x64(data, (UIntPtr) data_size, out width, out height);
+            default:
+                ThrowHelper.ThrowInvalidPlatformException();
+                width = 0;
+                height = 0;
+                return 0;
+        }
     }
 
     [DllImport(@"runtimes\win-x64\native\libwebp.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPGetInfo")]
@@ -225,8 +230,7 @@ internal static partial class UnsafeNativeMethods
     }
 
     [DllImport(@"runtimes\win-x64\native\libwebp.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPDecodeBGRInto")]
-    private static extern IntPtr WebPDecodeBGRInto_x64
-        ([In] IntPtr data, UIntPtr data_size, IntPtr output_buffer, int output_buffer_size, int output_stride);
+    private static extern IntPtr WebPDecodeBGRInto_x64([In] IntPtr data, UIntPtr data_size, IntPtr output_buffer, int output_buffer_size, int output_stride);
 
     /// <summary>Decode WEBP image pointed to by *data and returns BGRA samples into a preallocated buffer</summary>
     /// <param name="data">Pointer to WebP image data</param>
@@ -240,8 +244,7 @@ internal static partial class UnsafeNativeMethods
     }
 
     [DllImport(@"runtimes\win-x64\native\libwebp.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPDecodeBGRAInto")]
-    private static extern IntPtr WebPDecodeBGRAInto_x64
-        ([In] IntPtr data, UIntPtr data_size, IntPtr output_buffer, int output_buffer_size, int output_stride);
+    private static extern IntPtr WebPDecodeBGRAInto_x64([In] IntPtr data, UIntPtr data_size, IntPtr output_buffer, int output_buffer_size, int output_stride);
 
     /// <summary>Decode WEBP image pointed to by *data and returns ARGB samples into a preallocated buffer</summary>
     /// <param name="data">Pointer to WebP image data</param>

@@ -27,7 +27,7 @@ public sealed class WebP : IDisposable
     /// <summary>Read a WebP file</summary>
     /// <param name="pathFileName">WebP file to load</param>
     /// <returns>Bitmap with the WebP image</returns>
-    public Bitmap? Load(string pathFileName)
+    public Bitmap Load(string pathFileName)
     {
         try
         {
@@ -37,7 +37,8 @@ public sealed class WebP : IDisposable
         }
         catch (Exception ex)
         {
-            throw new Exception(ex.Message + "\r\nIn WebP.Load");
+            ThrowHelper.ThrowLoadException(ex.Message);
+            return null;
         }
     }
 
@@ -71,10 +72,6 @@ public sealed class WebP : IDisposable
 
                 return bmp;
             }
-            catch (Exception)
-            {
-                throw;
-            }
             finally
             {
                 //Unlock the pixels
@@ -90,14 +87,14 @@ public sealed class WebP : IDisposable
     public Bitmap Decode(byte[] rawWebP, WebPDecoderOptions options, PixelFormat pixelFormat = PixelFormat.DontCare)
     {
         var pinnedWebP = GCHandle.Alloc(rawWebP, GCHandleType.Pinned);
-        Bitmap bmp = null!;
-        BitmapData bmpData = null!;
+        Bitmap? bmp = null;
+        BitmapData? bmpData = null;
         try
         {
             WebPDecoderConfig config = default;
             if (UnsafeNativeMethods.WebPInitDecoderConfig(ref config) == 0)
             {
-                throw new Exception("WebPInitDecoderConfig failed. Wrong version?");
+                ThrowHelper.ThrowInitDecoderConfigException();
             }
 
             // Read the .webp input file information
@@ -108,14 +105,13 @@ public sealed class WebP : IDisposable
             if (options.use_scaling == 0)
             {
                 result = UnsafeNativeMethods.WebPGetFeatures(ptrRawWebP, rawWebP.Length, ref config.input);
-                if (result != VP8StatusCode.VP8_STATUS_OK)
-                    throw new Exception("Failed WebPGetFeatures with error " + result);
+                if (result != VP8StatusCode.VP8_STATUS_OK) ThrowHelper.ThrowGetFeaturesException(result);
 
                 //Test cropping values
                 if (options.use_cropping == 1)
                 {
                     if (options.crop_left + options.crop_width > config.input.Width || options.crop_top + options.crop_height > config.input.Height)
-                        throw new Exception("Crop options exceeded WebP image dimensions");
+                        ThrowHelper.ThrowCropException();
                     width = options.crop_width;
                     height = options.crop_height;
                 }
@@ -165,10 +161,7 @@ public sealed class WebP : IDisposable
 
             // Decode
             result = UnsafeNativeMethods.WebPDecode(ptrRawWebP, rawWebP.Length, ref config);
-            if (result != VP8StatusCode.VP8_STATUS_OK)
-            {
-                throw new Exception("Failed WebPDecode with error " + result);
-            }
+            if (result != VP8StatusCode.VP8_STATUS_OK) ThrowHelper.ThrowGetFeaturesException(result);
 
             UnsafeNativeMethods.WebPFreeDecBuffer(ref config.output);
 
@@ -176,17 +169,16 @@ public sealed class WebP : IDisposable
         }
         catch (Exception ex)
         {
-            throw new Exception(ex.Message + "\r\nIn WebP.Decode");
+            ThrowHelper.ThrowDecodeException(ex.Message);
+            return null;
         }
         finally
         {
             //Unlock the pixels
-            if (bmpData != null)
-                bmp.UnlockBits(bmpData);
+            if (bmpData != null) bmp?.UnlockBits(bmpData);
 
             //Free memory
-            if (pinnedWebP.IsAllocated)
-                pinnedWebP.Free();
+            if (pinnedWebP.IsAllocated) pinnedWebP.Free();
         }
     }
 
@@ -198,14 +190,14 @@ public sealed class WebP : IDisposable
     public Bitmap GetThumbnailFast(byte[] rawWebP, int width, int height)
     {
         var pinnedWebP = GCHandle.Alloc(rawWebP, GCHandleType.Pinned);
-        Bitmap bmp = null!;
-        BitmapData bmpData = null!;
+        Bitmap? bmp = null;
+        BitmapData? bmpData = null;
 
         try
         {
             WebPDecoderConfig config = default;
             if (UnsafeNativeMethods.WebPInitDecoderConfig(ref config) == 0)
-                throw new Exception("WebPInitDecoderConfig failed. Wrong version?");
+                ThrowHelper.ThrowInitDecoderConfigException();
 
             // Set up decode options
             config.options.bypass_filtering = 1;
@@ -231,8 +223,7 @@ public sealed class WebP : IDisposable
             // Decode
             var ptrRawWebP = pinnedWebP.AddrOfPinnedObject();
             var result = UnsafeNativeMethods.WebPDecode(ptrRawWebP, rawWebP.Length, ref config);
-            if (result != VP8StatusCode.VP8_STATUS_OK)
-                throw new Exception("Failed WebPDecode with error " + result);
+            if (result != VP8StatusCode.VP8_STATUS_OK) ThrowHelper.ThrowGetFeaturesException(result);
 
             UnsafeNativeMethods.WebPFreeDecBuffer(ref config.output);
 
@@ -240,17 +231,16 @@ public sealed class WebP : IDisposable
         }
         catch (Exception ex)
         {
-            throw new Exception(ex.Message + "\r\nIn WebP.Thumbnail");
+            ThrowHelper.ThrowThumbnailException(ex.Message);
+            return null;
         }
         finally
         {
             //Unlock the pixels
-            if (bmpData != null)
-                bmp.UnlockBits(bmpData);
+            if (bmpData != null) bmp?.UnlockBits(bmpData);
 
             //Free memory
-            if (pinnedWebP.IsAllocated)
-                pinnedWebP.Free();
+            if (pinnedWebP.IsAllocated) pinnedWebP.Free();
         }
     }
 
@@ -262,19 +252,18 @@ public sealed class WebP : IDisposable
     public Bitmap GetThumbnailQuality(byte[] rawWebP, int width, int height)
     {
         var pinnedWebP = GCHandle.Alloc(rawWebP, GCHandleType.Pinned);
-        Bitmap bmp = null!;
-        BitmapData bmpData = null!;
+        Bitmap? bmp = null;
+        BitmapData? bmpData = null;
 
         try
         {
             WebPDecoderConfig config = default;
             if (UnsafeNativeMethods.WebPInitDecoderConfig(ref config) == 0)
-                throw new Exception("WebPInitDecoderConfig failed. Wrong version?");
+                ThrowHelper.ThrowInitDecoderConfigException();
 
             var ptrRawWebP = pinnedWebP.AddrOfPinnedObject();
             var result = UnsafeNativeMethods.WebPGetFeatures(ptrRawWebP, rawWebP.Length, ref config.input);
-            if (result != VP8StatusCode.VP8_STATUS_OK)
-                throw new Exception("Failed WebPGetFeatures with error " + result);
+            if (result != VP8StatusCode.VP8_STATUS_OK) ThrowHelper.ThrowGetFeaturesException(result);
 
             // Set up decode options
             config.options.bypass_filtering = 0;
@@ -308,8 +297,7 @@ public sealed class WebP : IDisposable
 
             // Decode
             result = UnsafeNativeMethods.WebPDecode(ptrRawWebP, rawWebP.Length, ref config);
-            if (result != VP8StatusCode.VP8_STATUS_OK)
-                throw new Exception("Failed WebPDecode with error " + result);
+            if (result != VP8StatusCode.VP8_STATUS_OK) ThrowHelper.ThrowGetFeaturesException(result);
 
             UnsafeNativeMethods.WebPFreeDecBuffer(ref config.output);
 
@@ -317,17 +305,16 @@ public sealed class WebP : IDisposable
         }
         catch (Exception ex)
         {
-            throw new Exception(ex.Message + "\r\nIn WebP.Thumbnail");
+            ThrowHelper.ThrowThumbnailException(ex.Message);
+            return null;
         }
         finally
         {
             //Unlock the pixels
-            if (bmpData != null)
-                bmp.UnlockBits(bmpData);
+            if (bmpData != null) bmp?.UnlockBits(bmpData);
 
             //Free memory
-            if (pinnedWebP.IsAllocated)
-                pinnedWebP.Free();
+            if (pinnedWebP.IsAllocated) pinnedWebP.Free();
         }
     }
 
@@ -347,7 +334,7 @@ public sealed class WebP : IDisposable
         }
         catch (Exception ex)
         {
-            throw new Exception(ex.Message + "\r\nIn WebP.Save");
+            ThrowHelper.ThrowSaveException(ex.Message);
         }
     }
 
@@ -358,50 +345,44 @@ public sealed class WebP : IDisposable
     public byte[] EncodeLossy(Bitmap bmp, int quality = 75)
     {
         //test bmp
-        if (bmp.Width == 0 || bmp.Height == 0)
-            throw new ArgumentException("Bitmap contains no data.", nameof(bmp));
-        if (bmp.Width > WEBP_MAX_DIMENSION || bmp.Height > WEBP_MAX_DIMENSION)
-            throw new NotSupportedException("Bitmap's dimension is too large. Max is " + WEBP_MAX_DIMENSION + "x" + WEBP_MAX_DIMENSION + " pixels.");
-        if (bmp.PixelFormat != PixelFormat.Format24bppRgb && bmp.PixelFormat != PixelFormat.Format32bppArgb)
-            throw new NotSupportedException("Only support Format24bppRgb and Format32bppArgb pixelFormat.");
+        if (bmp.Width == 0 || bmp.Height == 0) ThrowHelper.ThrowBitmapNoDataException(nameof(bmp));
+        if (bmp.Width > WEBP_MAX_DIMENSION || bmp.Height > WEBP_MAX_DIMENSION) ThrowHelper.ThrowBitmapDimensionException(WEBP_MAX_DIMENSION);
+        if (bmp.PixelFormat != PixelFormat.Format24bppRgb && bmp.PixelFormat != PixelFormat.Format32bppArgb) ThrowHelper.ThrowBitmapPixelFormatException();
 
-        BitmapData bmpData = null!;
+        BitmapData? bmpData = null;
         var unmanagedData = IntPtr.Zero;
 
         try
         {
-            int size;
-
             //Get bmp data
             bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, bmp.PixelFormat);
 
             //Compress the bmp data
-            if (bmp.PixelFormat == PixelFormat.Format24bppRgb)
-                size = UnsafeNativeMethods.WebPEncodeBGR(bmpData.Scan0, bmp.Width, bmp.Height, bmpData.Stride, quality, out unmanagedData);
-            else
-                size = UnsafeNativeMethods.WebPEncodeBGRA(bmpData.Scan0, bmp.Width, bmp.Height, bmpData.Stride, quality, out unmanagedData);
+            var size = bmp.PixelFormat == PixelFormat.Format24bppRgb
+                ? UnsafeNativeMethods.WebPEncodeBGR(bmpData.Scan0, bmp.Width, bmp.Height, bmpData.Stride, quality, out unmanagedData)
+                : UnsafeNativeMethods.WebPEncodeBGRA(bmpData.Scan0, bmp.Width, bmp.Height, bmpData.Stride, quality, out unmanagedData);
+
             if (size == 0)
-                throw new Exception("Can´t encode WebP");
+                ThrowHelper.ThrowEncodeException();
 
             //Copy image compress data to output array
-            var rawWebP = new byte[size];
+            var rawWebP = GC.AllocateUninitializedArray<byte>(size);
             Marshal.Copy(unmanagedData, rawWebP, 0, size);
 
             return rawWebP;
         }
         catch (Exception ex)
         {
-            throw new Exception(ex.Message + "\r\nIn WebP.EncodeLossly");
+            ThrowHelper.ThrowEncodeLosslyException(ex.Message);
+            return null;
         }
         finally
         {
             //Unlock the pixels
-            if (bmpData != null)
-                bmp.UnlockBits(bmpData);
+            if (bmpData != null) bmp.UnlockBits(bmpData);
 
             //Free memory
-            if (unmanagedData != IntPtr.Zero)
-                UnsafeNativeMethods.WebPFree(unmanagedData);
+            if (unmanagedData != IntPtr.Zero) UnsafeNativeMethods.WebPFree(unmanagedData);
         }
     }
 
@@ -416,8 +397,7 @@ public sealed class WebP : IDisposable
         var config = new WebPConfig();
 
         //Set compression parameters
-        if (UnsafeNativeMethods.WebPConfigInit(ref config, WebPPreset.WEBP_PRESET_DEFAULT, 75) == 0)
-            throw new Exception("Can´t configure preset");
+        if (UnsafeNativeMethods.WebPConfigInit(ref config, WebPPreset.WEBP_PRESET_DEFAULT, 75) == 0) ThrowHelper.ThrowConfigurePresetException();
 
         // Add additional tuning:
         config.method = speed;
@@ -455,14 +435,11 @@ public sealed class WebP : IDisposable
     public byte[] EncodeLossless(Bitmap bmp)
     {
         //test bmp
-        if (bmp.Width == 0 || bmp.Height == 0)
-            throw new ArgumentException("Bitmap contains no data.", "bmp");
-        if (bmp.Width > WEBP_MAX_DIMENSION || bmp.Height > WEBP_MAX_DIMENSION)
-            throw new NotSupportedException("Bitmap's dimension is too large. Max is " + WEBP_MAX_DIMENSION + "x" + WEBP_MAX_DIMENSION + " pixels.");
-        if (bmp.PixelFormat != PixelFormat.Format24bppRgb && bmp.PixelFormat != PixelFormat.Format32bppArgb)
-            throw new NotSupportedException("Only support Format24bppRgb and Format32bppArgb pixelFormat.");
+        if (bmp.Width == 0 || bmp.Height == 0) ThrowHelper.ThrowBitmapNoDataException(nameof(bmp));
+        if (bmp.Width > WEBP_MAX_DIMENSION || bmp.Height > WEBP_MAX_DIMENSION) ThrowHelper.ThrowBitmapDimensionException(WEBP_MAX_DIMENSION);
+        if (bmp.PixelFormat != PixelFormat.Format24bppRgb && bmp.PixelFormat != PixelFormat.Format32bppArgb) ThrowHelper.ThrowBitmapPixelFormatException();
 
-        BitmapData bmpData = null!;
+        BitmapData? bmpData = null;
         var unmanagedData = IntPtr.Zero;
         try
         {
@@ -470,30 +447,28 @@ public sealed class WebP : IDisposable
             bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, bmp.PixelFormat);
 
             //Compress the bmp data
-            int size;
-            size = bmp.PixelFormat == PixelFormat.Format24bppRgb
+            var size = bmp.PixelFormat == PixelFormat.Format24bppRgb
                 ? UnsafeNativeMethods.WebPEncodeLosslessBGR(bmpData.Scan0, bmp.Width, bmp.Height, bmpData.Stride, out unmanagedData)
                 : UnsafeNativeMethods.WebPEncodeLosslessBGRA(bmpData.Scan0, bmp.Width, bmp.Height, bmpData.Stride, out unmanagedData);
 
             //Copy image compress data to output array
-            var rawWebP = new byte[size];
+            var rawWebP = GC.AllocateUninitializedArray<byte>(size);
             Marshal.Copy(unmanagedData, rawWebP, 0, size);
 
             return rawWebP;
         }
         catch (Exception ex)
         {
-            throw new Exception(ex.Message + "\r\nIn WebP.EncodeLossless (Simple)");
+            ThrowHelper.ThrowEncodeLosslessException(ex.Message);
+            return null;
         }
         finally
         {
             //Unlock the pixels
-            if (bmpData != null)
-                bmp.UnlockBits(bmpData);
+            if (bmpData != null) bmp.UnlockBits(bmpData);
 
             //Free memory
-            if (unmanagedData != IntPtr.Zero)
-                UnsafeNativeMethods.WebPFree(unmanagedData);
+            if (unmanagedData != IntPtr.Zero) UnsafeNativeMethods.WebPFree(unmanagedData);
         }
     }
 
@@ -508,13 +483,13 @@ public sealed class WebP : IDisposable
 
         //Set compression parameters
         if (UnsafeNativeMethods.WebPConfigInit(ref config, WebPPreset.WEBP_PRESET_DEFAULT, (speed + 1) * 10) == 0)
-            throw new Exception("Can´t config preset");
+            ThrowHelper.ThrowConfigPresetException();
 
         //Old version of DLL does not support info and WebPConfigLosslessPreset
         if (UnsafeNativeMethods.WebPGetDecoderVersion() > 1082)
         {
             if (UnsafeNativeMethods.WebPConfigLosslessPreset(ref config, speed) == 0)
-                throw new Exception("Can´t configure lossless preset");
+                ThrowHelper.ThrowConfigureLosslessPresetException();
         }
         else
         {
@@ -542,17 +517,17 @@ public sealed class WebP : IDisposable
     public byte[] EncodeNearLossless(Bitmap bmp, int quality, int speed = 9)
     {
         //test DLL version
-        if (UnsafeNativeMethods.WebPGetDecoderVersion() <= 1082)
-            throw new Exception("This DLL version not support EncodeNearLossless");
+        if (UnsafeNativeMethods.WebPGetDecoderVersion() <= 1082) ThrowHelper.ThrowDllVersionException();
 
         //Inicialize config struct
         var config = new WebPConfig();
 
         //Set compression parameters
         if (UnsafeNativeMethods.WebPConfigInit(ref config, WebPPreset.WEBP_PRESET_DEFAULT, (speed + 1) * 10) == 0)
-            throw new Exception("Can´t configure preset");
+            ThrowHelper.ThrowConfigurePresetException();
         if (UnsafeNativeMethods.WebPConfigLosslessPreset(ref config, speed) == 0)
-            throw new Exception("Can´t configure lossless preset");
+            ThrowHelper.ThrowConfigureLosslessPresetException();
+
         config.pass = speed + 1;
         config.near_lossless = quality;
         config.thread_level = 1;
@@ -577,7 +552,8 @@ public sealed class WebP : IDisposable
         }
         catch (Exception ex)
         {
-            throw new Exception(ex.Message + "\r\nIn WebP.GetVersion");
+            ThrowHelper.ThrowGetVersionException(ex.Message);
+            return null;
         }
     }
 
@@ -597,8 +573,7 @@ public sealed class WebP : IDisposable
                 var features = new WebPBitstreamFeatures();
                 var result = UnsafeNativeMethods.WebPGetFeatures((IntPtr) ptrRawWebP, rawWebP.Length, ref features);
 
-                if (result != 0)
-                    throw new Exception(result.ToString());
+                if (result != 0) ThrowHelper.ThrowException(result.ToString());
 
                 width = features.Width;
                 height = features.Height;
@@ -613,7 +588,12 @@ public sealed class WebP : IDisposable
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message + "\r\nIn WebP.GetInfo");
+                ThrowHelper.ThrowGetInfoException(ex.Message);
+                width = 0;
+                height = 0;
+                has_alpha = false;
+                has_animation = false;
+                format = default;
             }
         }
     }
@@ -627,27 +607,22 @@ public sealed class WebP : IDisposable
     {
         var wpicSource = (WebPPicture) default;
         var wpicReference = (WebPPicture) default;
-        BitmapData sourceBmpData = null!;
-        BitmapData referenceBmpData = null!;
+        BitmapData? sourceBmpData = null;
+        BitmapData? referenceBmpData = null;
         var result = new float[5];
         var pinnedResult = GCHandle.Alloc(result, GCHandleType.Pinned);
 
         try
         {
-            if (source == null)
-                throw new Exception("Source picture is void");
-            if (reference == null)
-                throw new Exception("Reference picture is void");
-            if (metric_type > 2)
-                throw new Exception("Bad metric_type. Use 0 = PSNR, 1 = SSIM, 2 = LSIM");
-            if (source.Width != reference.Width || source.Height != reference.Height)
-                throw new Exception("Source and Reference pictures have different dimensions");
+            if (source == null) ThrowHelper.ThrowException("Source picture is void");
+            if (reference == null) ThrowHelper.ThrowException("Reference picture is void");
+            if (metric_type > 2) ThrowHelper.ThrowException("Bad metric_type. Use 0 = PSNR, 1 = SSIM, 2 = LSIM");
+            if (source.Width != reference.Width || source.Height != reference.Height) ThrowHelper.ThrowException("Source and Reference pictures have different dimensions");
 
             // Setup the source picture data, allocating the bitmap, width and height
             sourceBmpData = source.LockBits(new Rectangle(0, 0, source.Width, source.Height), ImageLockMode.ReadOnly, source.PixelFormat);
             wpicSource = default;
-            if (UnsafeNativeMethods.WebPPictureInitInternal(ref wpicSource) != 1)
-                throw new Exception("Can´t initialize WebPPictureInit");
+            if (UnsafeNativeMethods.WebPPictureInitInternal(ref wpicSource) != 1) ThrowHelper.ThrowWebPPictureInitException();
             wpicSource.width = source.Width;
             wpicSource.height = source.Height;
 
@@ -656,20 +631,19 @@ public sealed class WebP : IDisposable
             {
                 wpicSource.use_argb = 1;
                 if (UnsafeNativeMethods.WebPPictureImportBGRA(ref wpicSource, sourceBmpData.Scan0, sourceBmpData.Stride) != 1)
-                    throw new Exception("Can´t allocate memory in WebPPictureImportBGR");
+                    ThrowHelper.ThrowWebPPictureImportBGRException();
             }
             else
             {
                 wpicSource.use_argb = 0;
                 if (UnsafeNativeMethods.WebPPictureImportBGR(ref wpicSource, sourceBmpData.Scan0, sourceBmpData.Stride) != 1)
-                    throw new Exception("Can´t allocate memory in WebPPictureImportBGR");
+                    ThrowHelper.ThrowWebPPictureImportBGRException();
             }
 
             // Setup the reference picture data, allocating the bitmap, width and height
             referenceBmpData = reference.LockBits(new Rectangle(0, 0, reference.Width, reference.Height), ImageLockMode.ReadOnly, reference.PixelFormat);
             wpicReference = default;
-            if (UnsafeNativeMethods.WebPPictureInitInternal(ref wpicReference) != 1)
-                throw new Exception("Can´t initialize WebPPictureInit");
+            if (UnsafeNativeMethods.WebPPictureInitInternal(ref wpicReference) != 1) ThrowHelper.ThrowWebPPictureInitException();
             wpicReference.width = reference.Width;
             wpicReference.height = reference.Height;
             wpicReference.use_argb = 1;
@@ -679,41 +653,37 @@ public sealed class WebP : IDisposable
             {
                 wpicSource.use_argb = 1;
                 if (UnsafeNativeMethods.WebPPictureImportBGRA(ref wpicReference, referenceBmpData.Scan0, referenceBmpData.Stride) != 1)
-                    throw new Exception("Can´t allocate memory in WebPPictureImportBGR");
+                    ThrowHelper.ThrowWebPPictureImportBGRException();
             }
             else
             {
                 wpicSource.use_argb = 0;
                 if (UnsafeNativeMethods.WebPPictureImportBGR(ref wpicReference, referenceBmpData.Scan0, referenceBmpData.Stride) != 1)
-                    throw new Exception("Can´t allocate memory in WebPPictureImportBGR");
+                    ThrowHelper.ThrowWebPPictureImportBGRException();
             }
 
             //Measure
             var ptrResult = pinnedResult.AddrOfPinnedObject();
             if (UnsafeNativeMethods.WebPPictureDistortion(ref wpicSource, ref wpicReference, metric_type, ptrResult) != 1)
-                throw new Exception("Can´t measure.");
+                ThrowHelper.ThrowException("Can´t measure.");
             return result;
         }
         catch (Exception ex)
         {
-            throw new Exception(ex.Message + "\r\nIn WebP.GetPictureDistortion");
+            ThrowHelper.ThrowGetPictureDistortionException(ex.Message);
+            return null;
         }
         finally
         {
             //Unlock the pixels
-            if (sourceBmpData != null)
-                source.UnlockBits(sourceBmpData);
-            if (referenceBmpData != null)
-                reference.UnlockBits(referenceBmpData);
+            if (sourceBmpData != null) source.UnlockBits(sourceBmpData);
+            if (referenceBmpData != null) reference.UnlockBits(referenceBmpData);
 
             //Free memory
-            if (wpicSource.argb != IntPtr.Zero)
-                UnsafeNativeMethods.WebPPictureFree(ref wpicSource);
-            if (wpicReference.argb != IntPtr.Zero)
-                UnsafeNativeMethods.WebPPictureFree(ref wpicReference);
+            if (wpicSource.argb != IntPtr.Zero) UnsafeNativeMethods.WebPPictureFree(ref wpicSource);
+            if (wpicReference.argb != IntPtr.Zero) UnsafeNativeMethods.WebPPictureFree(ref wpicReference);
             //Free memory
-            if (pinnedResult.IsAllocated)
-                pinnedResult.Free();
+            if (pinnedResult.IsAllocated) pinnedResult.Free();
         }
     }
 
@@ -728,49 +698,41 @@ public sealed class WebP : IDisposable
     private unsafe byte[] AdvancedEncode(Bitmap bmp, WebPConfig config, bool info)
     {
         var wpic = (WebPPicture) default;
-        BitmapData bmpData = null!;
+        BitmapData? bmpData = null;
         var stats = (WebPAuxStats) default;
         var ptrStats = IntPtr.Zero;
         try
         {
             //Validate the configuration
-            if (UnsafeNativeMethods.WebPValidateConfig(ref config) != 1)
-                throw new Exception("Bad configuration parameters");
+            if (UnsafeNativeMethods.WebPValidateConfig(ref config) != 1) ThrowHelper.ThrowConfigurationParametersException();
 
             //test bmp
-            if (bmp.Width == 0 || bmp.Height == 0)
-                throw new ArgumentException("Bitmap contains no data.", nameof(bmp));
-            if (bmp.Width > WEBP_MAX_DIMENSION || bmp.Height > WEBP_MAX_DIMENSION)
-                throw new NotSupportedException("Bitmap's dimension is too large. Max is " + WEBP_MAX_DIMENSION + "x" + WEBP_MAX_DIMENSION + " pixels.");
-            if (bmp.PixelFormat != PixelFormat.Format24bppRgb && bmp.PixelFormat != PixelFormat.Format32bppArgb)
-                throw new NotSupportedException("Only support Format24bppRgb and Format32bppArgb pixelFormat.");
+            if (bmp.Width == 0 || bmp.Height == 0) ThrowHelper.ThrowBitmapNoDataException(nameof(bmp));
+            if (bmp.Width > WEBP_MAX_DIMENSION || bmp.Height > WEBP_MAX_DIMENSION) ThrowHelper.ThrowBitmapDimensionException(WEBP_MAX_DIMENSION);
+            if (bmp.PixelFormat != PixelFormat.Format24bppRgb && bmp.PixelFormat != PixelFormat.Format32bppArgb) ThrowHelper.ThrowBitmapPixelFormatException();
 
             // Setup the input data, allocating a the bitmap, width and height
             bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, bmp.PixelFormat);
-            if (UnsafeNativeMethods.WebPPictureInitInternal(ref wpic) != 1)
-                throw new Exception("Can´t initialize WebPPictureInit");
+            if (UnsafeNativeMethods.WebPPictureInitInternal(ref wpic) != 1) ThrowHelper.ThrowWebPPictureInitException();
             wpic.width = bmp.Width;
             wpic.height = bmp.Height;
             wpic.use_argb = 1;
 
             int dataWebpSize;
-            byte[] dataWebp;
             if (bmp.PixelFormat == PixelFormat.Format32bppArgb)
             {
                 //Put the bitmap componets in wpic
                 var result = UnsafeNativeMethods.WebPPictureImportBGRA(ref wpic, bmpData.Scan0, bmpData.Stride);
-                if (result != 1) throw new Exception("Can´t allocate memory in WebPPictureImportBGRA");
+                if (result != 1) ThrowHelper.ThrowWebPPictureImportBGRAException();
                 wpic.colorspace = (uint) WEBP_CSP_MODE.MODE_bgrA;
                 dataWebpSize = bmp.Width * bmp.Height * 32;
-                dataWebp = new byte[bmp.Width * bmp.Height * 32]; //Memory for WebP output
             }
             else
             {
                 //Put the bitmap contents in WebPPicture instance
                 var result = UnsafeNativeMethods.WebPPictureImportBGR(ref wpic, bmpData.Scan0, bmpData.Stride);
-                if (result != 1) throw new Exception("Can´t allocate memory in WebPPictureImportBGR");
+                if (result != 1) ThrowHelper.ThrowWebPPictureImportBGRException();
                 dataWebpSize = bmp.Width * bmp.Height * 24;
-                dataWebp = new byte[bmp.Width * bmp.Height * 24];
             }
 
             //Set up statistics of compression
@@ -783,9 +745,9 @@ public sealed class WebP : IDisposable
             }
 
             //Memory for WebP output
-            if (dataWebpSize > 2147483591)
-                dataWebpSize = 2147483591;
-            //dataWebp = new byte[bmp.Width * bmp.Height * 32];
+            if (dataWebpSize > 2147483591) dataWebpSize = 2147483591;
+
+            var dataWebp = GC.AllocateUninitializedArray<byte>(dataWebpSize);
 
             byte[] rawWebP;
             fixed(void* dataWebpPtr = dataWebp)
@@ -799,7 +761,7 @@ public sealed class WebP : IDisposable
 
                 //compress the input samples
                 if (UnsafeNativeMethods.WebPEncode(ref config, ref wpic) != 1)
-                    throw new Exception("Encoding error: " + ((WebPEncodingError) wpic.error_code));
+                    ThrowHelper.ThrowEncodingErrorException(wpic.error_code);
 
                 //Remove OnCallback
                 //OnCallback = null!;
@@ -810,7 +772,7 @@ public sealed class WebP : IDisposable
 
                 //Copy webpData to rawWebP
                 var size = (int) (wpic.custom_ptr - (long) initPtr);
-                rawWebP = new byte[size];
+                rawWebP = GC.AllocateUninitializedArray<byte>(size);
                 Array.Copy(dataWebp, rawWebP, size);
 
             }
@@ -849,35 +811,26 @@ public sealed class WebP : IDisposable
         }
         catch (Exception ex)
         {
-            throw new Exception(ex.Message + "\r\nIn WebP.AdvancedEncode");
+            ThrowHelper.ThrowAdvancedEncodeException(ex.Message);
+            return null;
         }
         finally
         {
             //Free statistics memory
-            if (ptrStats != nint.Zero)
-            {
-                Marshal.FreeHGlobal(ptrStats);
-            }
+            if (ptrStats != nint.Zero) Marshal.FreeHGlobal(ptrStats);
 
             //Unlock the pixels
-            if (bmpData != null)
-            {
-                bmp.UnlockBits(bmpData);
-            }
+            if (bmpData != null) bmp.UnlockBits(bmpData);
 
             //Free memory
-            if (wpic.argb != IntPtr.Zero)
-            {
-                UnsafeNativeMethods.WebPPictureFree(ref wpic);
-            }
+            if (wpic.argb != IntPtr.Zero) UnsafeNativeMethods.WebPPictureFree(ref wpic);
         }
     }
 
     private static int MyWriter([In] nint data, nuint data_size, ref WebPPicture picture)
     {
         UnsafeNativeMethods.CopyMemory(picture.custom_ptr, data, (nint) data_size);
-        picture.custom_ptr = nint.Add(picture.custom_ptr, (int) data_size); //Only in .NET > 4.0
-        //picture.custom_ptr = new IntPtr(picture.custom_ptr.ToInt64() + (int)data_size);
+        picture.custom_ptr = nint.Add(picture.custom_ptr, (int) data_size);
         return 1;
     }
 
