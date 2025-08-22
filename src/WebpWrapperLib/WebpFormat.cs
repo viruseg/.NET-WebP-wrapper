@@ -4,9 +4,17 @@
 
 namespace WebpWrapper;
 
+/// <summary>
+/// Format of image.
+/// </summary>
 public enum WebpFormat
 {
+    /// <summary>Undefined format.</summary>
     Undefined = 0,
+
+    /// <summary>Lossy format.</summary>
     Lossy = 1,
+
+    /// <summary>Lossless format.</summary>
     Lossless = 2
 }

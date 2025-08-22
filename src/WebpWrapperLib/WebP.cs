@@ -9,6 +9,9 @@ using System.Runtime.InteropServices;
 
 namespace WebpWrapper;
 
+/// <summary>
+/// Wrapper for WebP format.
+/// </summary>
 [SuppressMessage("Interoperability", "CA1416")]
 public sealed class WebP : IDisposable
 {
@@ -84,7 +87,7 @@ public sealed class WebP : IDisposable
     /// <param name="rawWebP">the data to uncompress</param>
     /// <param name="options">Options for advanced decode</param>
     /// <returns>Bitmap with the WebP image</returns>
-    public Bitmap Decode(byte[] rawWebP, WebPDecoderOptions options, PixelFormat pixelFormat = PixelFormat.DontCare)
+    public Bitmap Decode(byte[] rawWebP, WebPDecoderOptions options)
     {
         var pinnedWebP = GCHandle.Alloc(rawWebP, GCHandleType.Pinned);
         Bitmap? bmp = null;
@@ -390,6 +393,7 @@ public sealed class WebP : IDisposable
     /// <param name="bmp">Bitmap with the image</param>
     /// <param name="quality">Between 0 (lower quality, lowest file size) and 100 (highest quality, higher file size)</param>
     /// <param name="speed">Between 0 (fastest, lowest compression) and 9 (slower, best compression)</param>
+    /// <param name="info">True if need encode info.</param>
     /// <returns>Compressed data</returns>
     public byte[] EncodeLossy(Bitmap bmp, int quality, int speed, bool info = false)
     {
@@ -424,6 +428,11 @@ public sealed class WebP : IDisposable
         return AdvancedEncode(bmp, config, info);
     }
 
+    /// <summary>Lossy encoding bitmap to WebP (Advanced encoding API)</summary>
+    /// <param name="bmp">Bitmap with the image</param>
+    /// <param name="config">Configuration for encode</param>
+    /// <param name="info">True if need encode info.</param>
+    /// <returns>Compressed data</returns>
     public byte[] EncodeLossy(Bitmap bmp, WebPConfig config, bool info = false)
     {
         return AdvancedEncode(bmp, config, info);
@@ -563,7 +572,7 @@ public sealed class WebP : IDisposable
     /// <param name="height">height of image</param>
     /// <param name="has_alpha">Image has alpha channel</param>
     /// <param name="has_animation">Image is a animation</param>
-    /// <param name="format">Format of image: 0 = undefined (/mixed), 1 = lossy, 2 = lossless</param>
+    /// <param name="format">Format of image</param>
     public static unsafe void GetInfo(byte[] rawWebP, out int width, out int height, out bool has_alpha, out bool has_animation, out WebpFormat format)
     {
         fixed (byte* ptrRawWebP = rawWebP)
