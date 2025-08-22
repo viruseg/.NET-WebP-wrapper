@@ -4,7 +4,7 @@ The wrapper work only 64 bit system.
 
 |Package|Download|
 |-|-|
-|Webp-Wrapper-for-NET-Win-x64|[![NuGet](https://img.shields.io/nuget/v/Webp-Wrapper-for-NET-Win-x64.svg)](https://www.nuget.org/packages/Webp-Wrapper-for-NET-Win-x64)
+|Webp-Wrapper-for-NET-Win-x64|[![NuGet](https://img.shields.io/nuget/v/Webp-Wrapper-for-NET-Win-x64.svg)](https://www.nuget.org/packages/Webp-Wrapper-for-NET-Win-x64) [![NuGet](https://img.shields.io/nuget/dt/Webp-Wrapper-for-NET-Win-x64.svg)](https://www.nuget.org/packages/Webp-Wrapper-for-NET-Win-x64)
 
 ```bash
 dotnet add package Webp-Wrapper-for-NET-Win-x64
