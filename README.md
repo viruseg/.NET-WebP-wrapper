@@ -1,4 +1,4 @@
-This fork is intended for current versions of .NET. Includes the latest version of the library libwebp.dll v1.5.0. The structures have been updated to match the current version of the library.
+This fork is intended for current versions of .NET. Includes the latest version of the library libwebp.dll v1.6.0. The structures have been updated to match the current version of the library.
 
 The wrapper work only 64 bit system.
 
