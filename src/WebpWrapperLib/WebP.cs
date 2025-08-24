@@ -17,6 +17,8 @@ public sealed class WebP : IDisposable
 {
     private const int WEBP_MAX_DIMENSION = 16383;
 
+    private UnsafeNativeMethods.WebPMemoryWrite? OnCallback;
+
     /// <summary>This function will initialize the configuration according to a predefined set of parameters (referred to by 'preset') and a given quality factor</summary>
     /// <param name="config">The WebPConfig structure</param>
     /// <param name="preset">Type of image</param>
@@ -696,8 +698,6 @@ public sealed class WebP : IDisposable
         }
     }
 
-    private UnsafeNativeMethods.WebPMemoryWrite? OnCallback;
-
     /// <summary>Encoding image  using Advanced encoding API</summary>
     /// <param name="bmp">Bitmap with the image</param>
     /// <param name="config">Configuration for encode</param>
@@ -773,7 +773,7 @@ public sealed class WebP : IDisposable
                     ThrowHelper.ThrowEncodingErrorException(wpic.error_code);
 
                 //Remove OnCallback
-                //OnCallback = null!;
+                OnCallback = null!;
 
                 //Unlock the pixels
                 bmp.UnlockBits(bmpData);
