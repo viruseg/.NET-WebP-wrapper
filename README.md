@@ -1,6 +1,6 @@
 This fork is intended for current versions of .NET. Includes the latest version of the library libwebp.dll v1.6.0. The structures have been updated to match the current version of the library.
 
-The wrapper work only 64 bit system.
+The wrapper work only 64-bit Windows system.
 
 |Package|Download|
 |-|-|
@@ -15,7 +15,7 @@ Wrapper for libwebp in C#. The most complete wrapper in pure managed C#.
 
 Exposes Simple Decoding and Encoding API, Advanced Decoding and Encoding API (with statistics of compression), Get version library and WebPGetFeatures (info of any WebP file). Exposed get PSNR, SSIM or LSIM distortion metrics.
 
-The wrapper is in safe managed code in one class. No need for external dll except libwebp_x64.dll (included). The wrapper works in 64 bit.
+The wrapper is in safe managed code in one class. No need for external dll except libwebp_x64.dll (included). The wrapper work only 64-bit Windows system.
 
 The code is commented and includes simple examples for using the wrapper.
 
@@ -149,4 +149,4 @@ MessageBox.Show("Red: " + result[0] + dB\n" +
 
 
 ## Thanks to jzern@google.com
-Without their help this wapper would not have been possible.
+Without their help this wrapper would not have been possible.
