@@ -2,6 +2,7 @@
 // Copyright (c) 2020 Jose M. Piñeiro
 // Copyright (c) 2025 Denis Tulupov
 
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -791,29 +792,29 @@ public sealed class WebP : IDisposable
             if (info)
             {
                 stats = Marshal.PtrToStructure<WebPAuxStats>(ptrStats)!;
-                Console.WriteLine("Dimension: " + wpic.width + " x " + wpic.height + " pixels\n" +
-                                  "Output:    " + stats.coded_size + " bytes\n" +
-                                  "PSNR Y:    " + stats.PSNRY + " db\n" +
-                                  "PSNR u:    " + stats.PSNRU + " db\n" +
-                                  "PSNR v:    " + stats.PSNRV + " db\n" +
-                                  "PSNR ALL:  " + stats.PSNRALL + " db\n" +
-                                  "Block intra4:  " + stats.block_count_intra4 + "\n" +
-                                  "Block intra16: " + stats.block_count_intra16 + "\n" +
-                                  "Block skipped: " + stats.block_count_skipped + "\n" +
-                                  "Header size:    " + stats.header_bytes + " bytes\n" +
-                                  "Mode-partition: " + stats.mode_partition_0 + " bytes\n" +
-                                  "Macro-blocks 0: " + stats.segment_size_segments0 + " residuals bytes\n" +
-                                  "Macro-blocks 1: " + stats.segment_size_segments1 + " residuals bytes\n" +
-                                  "Macro-blocks 2: " + stats.segment_size_segments2 + " residuals bytes\n" +
-                                  "Macro-blocks 3: " + stats.segment_size_segments3 + " residuals bytes\n" +
-                                  "Quantizer    0: " + stats.segment_quant_segments0 + " residuals bytes\n" +
-                                  "Quantizer    1: " + stats.segment_quant_segments1 + " residuals bytes\n" +
-                                  "Quantizer    2: " + stats.segment_quant_segments2 + " residuals bytes\n" +
-                                  "Quantizer    3: " + stats.segment_quant_segments3 + " residuals bytes\n" +
-                                  "Filter level 0: " + stats.segment_level_segments0 + " residuals bytes\n" +
-                                  "Filter level 1: " + stats.segment_level_segments1 + " residuals bytes\n" +
-                                  "Filter level 2: " + stats.segment_level_segments2 + " residuals bytes\n" +
-                                  "Filter level 3: " + stats.segment_level_segments3 + " residuals bytes\n", "Compression statistics");
+                Debug.Print("Dimension: " + wpic.width + " x " + wpic.height + " pixels\n" +
+                            "Output:    " + stats.coded_size + " bytes\n" +
+                            "PSNR Y:    " + stats.PSNRY + " db\n" +
+                            "PSNR u:    " + stats.PSNRU + " db\n" +
+                            "PSNR v:    " + stats.PSNRV + " db\n" +
+                            "PSNR ALL:  " + stats.PSNRALL + " db\n" +
+                            "Block intra4:  " + stats.block_count_intra4 + "\n" +
+                            "Block intra16: " + stats.block_count_intra16 + "\n" +
+                            "Block skipped: " + stats.block_count_skipped + "\n" +
+                            "Header size:    " + stats.header_bytes + " bytes\n" +
+                            "Mode-partition: " + stats.mode_partition_0 + " bytes\n" +
+                            "Macro-blocks 0: " + stats.segment_size_segments0 + " residuals bytes\n" +
+                            "Macro-blocks 1: " + stats.segment_size_segments1 + " residuals bytes\n" +
+                            "Macro-blocks 2: " + stats.segment_size_segments2 + " residuals bytes\n" +
+                            "Macro-blocks 3: " + stats.segment_size_segments3 + " residuals bytes\n" +
+                            "Quantizer    0: " + stats.segment_quant_segments0 + " residuals bytes\n" +
+                            "Quantizer    1: " + stats.segment_quant_segments1 + " residuals bytes\n" +
+                            "Quantizer    2: " + stats.segment_quant_segments2 + " residuals bytes\n" +
+                            "Quantizer    3: " + stats.segment_quant_segments3 + " residuals bytes\n" +
+                            "Filter level 0: " + stats.segment_level_segments0 + " residuals bytes\n" +
+                            "Filter level 1: " + stats.segment_level_segments1 + " residuals bytes\n" +
+                            "Filter level 2: " + stats.segment_level_segments2 + " residuals bytes\n" +
+                            "Filter level 3: " + stats.segment_level_segments3 + " residuals bytes\n", "Compression statistics");
             }
 
             return rawWebP;
