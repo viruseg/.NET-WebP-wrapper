@@ -13,40 +13,45 @@ public struct WebPConfig
     /// <summary>Lossless encoding (0=lossy(default), 1=lossless).</summary>
     public int lossless;
 
-    /// <summary>between 0 and 100. For lossy, 0 gives the smallest
+    /// <summary>Between 0 and 100. For lossy, 0 gives the smallest
     /// size and 100 the largest. For lossless, this
     /// parameter is the amount of effort put into the
     /// compression: 0 is the fastest but gives larger
     /// files compared to the slowest, but best, 100.</summary>
     public float quality;
 
-    /// <summary>quality/speed trade-off (0=fast, 6=slower-better)</summary>
+    /// <summary>Quality/speed trade-off (0=fast, 6=slower-better)</summary>
     public int method;
 
     /// <summary>Hint for image type (lossless only for now).</summary>
     public WebPImageHint image_hint;
 
-    /// <summary>if non-zero, set the desired target size in bytes.
+    /// <summary>If non-zero, set the desired target size in bytes.
     ///  Takes precedence over the 'compression' parameter.</summary>
     public int target_size;
 
-    /// <summary>if non-zero, specifies the minimal distortion to
+    /// <summary>If non-zero, specifies the minimal distortion to
     /// try to achieve. Takes precedence over target_size.</summary>
     public float target_PSNR;
 
-    /// <summary>maximum number of segments to use, in [1..4]</summary>
+    /// <summary>Maximum number of segments to use, in [1..4]</summary>
     public int segments;
 
-    /// <summary>Spatial Noise Shaping. 0=off, 100=maximum.</summary>
+    /// <summary>The amplitude of the spatial noise shaping.
+    /// Spatial noise shaping (SNS) refers to a general collection of built-in algorithms used to
+    /// decide which area of the picture should use relatively less bits, and where else to better transfer these bits.
+    /// The possible range goes from 0 (algorithm is off) to 100 (the maximal effect). The default value is 80.</summary>
     public int sns_strength;
 
-    /// <summary>range: [0 = off .. 100 = strongest]</summary>
+    /// <summary>The strength of the deblocking filter, between 0 (no filtering) and 100 (maximum filtering).
+    /// A value of 0 turns off any filtering. Higher values increase the strength of the filtering process applied after decoding the image.
+    /// The higher the value, the smoother the image appears. Typical values are usually in the range of 20 to 50.</summary>
     public int filter_strength;
 
-    /// <summary>range: [0 = off .. 7 = least sharp]</summary>
+    /// <summary>Filter sharpness. Range: [0 = off .. 7 = least sharp]</summary>
     public int filter_sharpness;
 
-    /// <summary>filtering type: 0 = simple, 1 = strong (only used
+    /// <summary>Filtering type: 0 = simple, 1 = strong (only used
     /// if filter_strength > 0 or autofilter > 0)</summary>
     public int filter_type;
 
@@ -61,18 +66,19 @@ public struct WebPConfig
     /// 0: none, 1: fast, 2: best. Default if 1.</summary>
     public int alpha_filtering;
 
-    /// <summary>Between 0 (smallest size) and 100 (lossless).
-    /// Default is 100.</summary>
+    /// <summary>The compression value for alpha compression between 0 (smallest size) and 100 (lossless).
+    /// Lossless compression of alpha is achieved using a value of 100,
+    /// while the lower values result in a lossy compression. The default is 100.</summary>
     public int alpha_quality;
 
-    /// <summary>number of entropy-analysis passes (in [1..10]).</summary>
+    /// <summary>Number of entropy-analysis passes (in [1..10]).</summary>
     public int pass;
 
-    /// <summary>if true, export the compressed picture back.
+    /// <summary>If true, export the compressed picture back.
     /// In-loop filtering is not applied.</summary>
     public int show_compressed;
 
-    /// <summary>preprocessing filter:
+    /// <summary>Preprocessing filter:
     /// 0=none, 1=segment-smooth, 2=pseudo-random dithering</summary>
     public int preprocessing;
 
@@ -80,7 +86,7 @@ public struct WebPConfig
     /// is set to 0 for easier progressive decoding.</summary>
     public int partitions;
 
-    /// <summary>quality degradation allowed to fit the 512k limit
+    /// <summary>Quality degradation allowed to fit the 512k limit
     /// on prediction modes coding (0: no degradation,
     /// 100: maximum possible degradation).</summary>
     public int partition_limit;
@@ -109,12 +115,12 @@ public struct WebPConfig
     /// <summary>reserved for future lossless feature</summary>
     public int use_delta_palette;
 
-    /// <summary>if needed, use sharp (and slow) RGB->YUV conversion</summary>
+    /// <summary>If needed, use sharp (and slow) RGB->YUV conversion</summary>
     public int use_sharp_yuv;
 
-    /// <summary>minimum permissible quality factor</summary>
+    /// <summary>Minimum permissible quality factor</summary>
     public int qmin;
 
-    /// <summary>maximum permissible quality factor</summary>
+    /// <summary>Maximum permissible quality factor</summary>
     public int qmax;
 }
