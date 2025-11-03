@@ -709,7 +709,6 @@ public sealed class WebP : IDisposable
     {
         var wpic = (WebPPicture) default;
         BitmapData? bmpData = null;
-        var stats = (WebPAuxStats) default;
         var ptrStats = IntPtr.Zero;
         try
         {
@@ -728,24 +727,25 @@ public sealed class WebP : IDisposable
             wpic.height = bmp.Height;
             wpic.use_argb = 1;
 
-            int dataWebpSize;
+            long dataWebpSize;
             if (bmp.PixelFormat == PixelFormat.Format32bppArgb)
             {
                 //Put the bitmap componets in wpic
                 var result = UnsafeNativeMethods.WebPPictureImportBGRA(ref wpic, bmpData.Scan0, bmpData.Stride);
                 if (result != 1) ThrowHelper.ThrowWebPPictureImportBGRAException();
                 wpic.colorspace = (uint) WEBP_CSP_MODE.MODE_bgrA;
-                dataWebpSize = bmp.Width * bmp.Height * 32;
+                dataWebpSize = (long) bmp.Width * bmp.Height * 32L;
             }
             else
             {
                 //Put the bitmap contents in WebPPicture instance
                 var result = UnsafeNativeMethods.WebPPictureImportBGR(ref wpic, bmpData.Scan0, bmpData.Stride);
                 if (result != 1) ThrowHelper.ThrowWebPPictureImportBGRException();
-                dataWebpSize = bmp.Width * bmp.Height * 24;
+                dataWebpSize = (long) bmp.Width * bmp.Height * 24L;
             }
 
             //Set up statistics of compression
+            WebPAuxStats stats;
             if (info)
             {
                 stats = default;
@@ -754,16 +754,12 @@ public sealed class WebP : IDisposable
                 wpic.stats = ptrStats;
             }
 
-            //Memory for WebP output
-            if (dataWebpSize > 2147483591) dataWebpSize = 2147483591;
-
-            var dataWebp = GC.AllocateUninitializedArray<byte>(dataWebpSize);
-
             byte[] rawWebP;
-            fixed(void* dataWebpPtr = dataWebp)
+            var dataWebpPtr = Marshal.AllocHGlobal((System.IntPtr) dataWebpSize);
+
+            try
             {
-                var initPtr = (nint) dataWebpPtr;
-                wpic.custom_ptr = initPtr;
+                wpic.custom_ptr = dataWebpPtr;
 
                 //Set up a byte-writing method (write-to-memory, in this case)
                 OnCallback = MyWriter;
@@ -773,20 +769,25 @@ public sealed class WebP : IDisposable
                 if (UnsafeNativeMethods.WebPEncode(ref config, ref wpic) != 1)
                     ThrowHelper.ThrowEncodingErrorException(wpic.error_code);
 
-                //Remove OnCallback
-                OnCallback = null!;
-
                 //Unlock the pixels
                 bmp.UnlockBits(bmpData);
                 bmpData = null!;
 
                 //Copy webpData to rawWebP
-                var size = (int) (wpic.custom_ptr - (long) initPtr);
+                var size = (int) (wpic.custom_ptr - (long) dataWebpPtr);
+                var dataWebp = new Span<byte>((void*) dataWebpPtr, size);
+
                 rawWebP = GC.AllocateUninitializedArray<byte>(size);
-                Array.Copy(dataWebp, rawWebP, size);
+                dataWebp.CopyTo(rawWebP);
 
             }
-            dataWebp = null!;
+            finally
+            {
+                Marshal.FreeHGlobal(dataWebpPtr);
+
+                //Remove OnCallback
+                OnCallback = null!;
+            }
 
             //Show statistics
             if (info)
