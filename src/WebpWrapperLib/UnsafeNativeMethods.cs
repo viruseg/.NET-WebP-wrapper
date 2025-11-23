@@ -12,9 +12,6 @@ namespace WebpWrapper;
 [SuppressUnmanagedCodeSecurity]
 internal static partial class UnsafeNativeMethods
 {
-    /*[DllImport("kernel32.dll", EntryPoint = "CopyMemory", SetLastError = false)]
-    internal static extern void CopyMemory(IntPtr dest, IntPtr src, uint count);*/
-
     [LibraryImport("kernel32.dll", EntryPoint = "RtlMoveMemory")]
     public static partial void CopyMemory(IntPtr dest, IntPtr src, IntPtr count);
 
@@ -52,9 +49,9 @@ internal static partial class UnsafeNativeMethods
         };
     }
 
-    [DllImport(@"runtimes\win-x64\native\libwebp.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPGetFeaturesInternal")]
-    private static extern VP8StatusCode WebPGetFeaturesInternal_x64([In] IntPtr rawWebP, UIntPtr data_size, ref WebPBitstreamFeatures features,
-                                                                    int WEBP_DECODER_ABI_VERSION);
+    [LibraryImport(@"runtimes\win-x64\native\libwebp.dll", EntryPoint = "WebPGetFeaturesInternal")]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    private static partial VP8StatusCode WebPGetFeaturesInternal_x64(IntPtr rawWebP, UIntPtr data_size, ref WebPBitstreamFeatures features, int WEBP_DECODER_ABI_VERSION);
 
     /// <summary>Activate the lossless compression mode with the desired efficiency</summary>
     /// <param name="config">The WebPConfig struct</param>
@@ -101,8 +98,9 @@ internal static partial class UnsafeNativeMethods
         };
     }
 
-    [DllImport(@"runtimes\win-x64\native\libwebp.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPPictureInitInternal")]
-    private static extern int WebPPictureInitInternal_x64(ref WebPPicture wpic, int WEBP_DECODER_ABI_VERSION);
+    [LibraryImport(@"runtimes\win-x64\native\libwebp.dll", EntryPoint = "WebPPictureInitInternal")]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    private static partial int WebPPictureInitInternal_x64(ref WebPPicture wpic, int WEBP_DECODER_ABI_VERSION);
 
     /// <summary>Colorspace conversion function to import RGB samples</summary>
     /// <param name="wpic">The WebPPicture structure</param>
@@ -118,8 +116,9 @@ internal static partial class UnsafeNativeMethods
         };
     }
 
-    [DllImport(@"runtimes\win-x64\native\libwebp.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPPictureImportBGR")]
-    private static extern int WebPPictureImportBGR_x64(ref WebPPicture wpic, IntPtr bgr, int stride);
+    [LibraryImport(@"runtimes\win-x64\native\libwebp.dll", EntryPoint = "WebPPictureImportBGR")]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    private static partial int WebPPictureImportBGR_x64(ref WebPPicture wpic, IntPtr bgr, int stride);
 
     /// <summary>Color-space conversion function to import RGB samples</summary>
     /// <param name="wpic">The WebPPicture structure</param>
@@ -135,8 +134,9 @@ internal static partial class UnsafeNativeMethods
         };
     }
 
-    [DllImport(@"runtimes\win-x64\native\libwebp.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPPictureImportBGRA")]
-    private static extern int WebPPictureImportBGRA_x64(ref WebPPicture wpic, IntPtr bgra, int stride);
+    [LibraryImport(@"runtimes\win-x64\native\libwebp.dll", EntryPoint = "WebPPictureImportBGRA")]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    private static partial int WebPPictureImportBGRA_x64(ref WebPPicture wpic, IntPtr bgra, int stride);
 
     /// <summary>Color-space conversion function to import RGB samples</summary>
     /// <param name="wpic">The WebPPicture structure</param>
@@ -152,8 +152,9 @@ internal static partial class UnsafeNativeMethods
         };
     }
 
-    [DllImport(@"runtimes\win-x64\native\libwebp.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPPictureImportBGRX")]
-    private static extern int WebPPictureImportBGRX_x64(ref WebPPicture wpic, IntPtr bgr, int stride);
+    [LibraryImport(@"runtimes\win-x64\native\libwebp.dll", EntryPoint = "WebPPictureImportBGRX")]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    private static partial int WebPPictureImportBGRX_x64(ref WebPPicture wpic, IntPtr bgr, int stride);
 
     /// <summary>The writer type for output compress data</summary>
     /// <param name="data">Data returned</param>
@@ -176,8 +177,9 @@ internal static partial class UnsafeNativeMethods
         };
     }
 
-    [DllImport(@"runtimes\win-x64\native\libwebp.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPEncode")]
-    private static extern int WebPEncode_x64(ref WebPConfig config, ref WebPPicture picture);
+    [LibraryImport(@"runtimes\win-x64\native\libwebp.dll", EntryPoint = "WebPEncode")]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    private static partial int WebPEncode_x64(ref WebPConfig config, ref WebPPicture picture);
 
     /// <summary>Release the memory allocated by WebPPictureAlloc() or WebPPictureImport*()
     /// Note that this function does _not_ free the memory used by the 'picture' object itself.
@@ -192,8 +194,9 @@ internal static partial class UnsafeNativeMethods
         }
     }
 
-    [DllImport(@"runtimes\win-x64\native\libwebp.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPPictureFree")]
-    private static extern void WebPPictureFree_x64(ref WebPPicture wpic);
+    [LibraryImport(@"runtimes\win-x64\native\libwebp.dll", EntryPoint = "WebPPictureFree")]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    private static partial void WebPPictureFree_x64(ref WebPPicture wpic);
 
     /// <summary>Validate the WebP image header and retrieve the image height and width. Pointers *width and *height can be passed NULL if deemed irrelevant</summary>
     /// <param name="data">Pointer to WebP image data</param>
@@ -215,8 +218,9 @@ internal static partial class UnsafeNativeMethods
         }
     }
 
-    [DllImport(@"runtimes\win-x64\native\libwebp.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPGetInfo")]
-    private static extern int WebPGetInfo_x64([In] IntPtr data, UIntPtr data_size, out int width, out int height);
+    [LibraryImport(@"runtimes\win-x64\native\libwebp.dll", EntryPoint = "WebPGetInfo")]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    private static partial int WebPGetInfo_x64(IntPtr data, UIntPtr data_size, out int width, out int height);
 
     /// <summary>Decode WEBP image pointed to by *data and returns BGR samples into a preallocated buffer</summary>
     /// <param name="data">Pointer to WebP image data</param>
@@ -229,8 +233,9 @@ internal static partial class UnsafeNativeMethods
         WebPDecodeBGRInto_x64(data, (UIntPtr) data_size, output_buffer, output_buffer_size, output_stride);
     }
 
-    [DllImport(@"runtimes\win-x64\native\libwebp.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPDecodeBGRInto")]
-    private static extern IntPtr WebPDecodeBGRInto_x64([In] IntPtr data, UIntPtr data_size, IntPtr output_buffer, int output_buffer_size, int output_stride);
+    [LibraryImport(@"runtimes\win-x64\native\libwebp.dll", EntryPoint = "WebPDecodeBGRInto")]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    private static partial IntPtr WebPDecodeBGRInto_x64(IntPtr data, UIntPtr data_size, IntPtr output_buffer, int output_buffer_size, int output_stride);
 
     /// <summary>Decode WEBP image pointed to by *data and returns BGRA samples into a preallocated buffer</summary>
     /// <param name="data">Pointer to WebP image data</param>
@@ -243,8 +248,9 @@ internal static partial class UnsafeNativeMethods
         WebPDecodeBGRAInto_x64(data, (UIntPtr) data_size, output_buffer, output_buffer_size, output_stride);
     }
 
-    [DllImport(@"runtimes\win-x64\native\libwebp.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPDecodeBGRAInto")]
-    private static extern IntPtr WebPDecodeBGRAInto_x64([In] IntPtr data, UIntPtr data_size, IntPtr output_buffer, int output_buffer_size, int output_stride);
+    [LibraryImport(@"runtimes\win-x64\native\libwebp.dll", EntryPoint = "WebPDecodeBGRAInto")]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    private static partial IntPtr WebPDecodeBGRAInto_x64(IntPtr data, UIntPtr data_size, IntPtr output_buffer, int output_buffer_size, int output_stride);
 
     /// <summary>Decode WEBP image pointed to by *data and returns ARGB samples into a preallocated buffer</summary>
     /// <param name="data">Pointer to WebP image data</param>
@@ -257,8 +263,9 @@ internal static partial class UnsafeNativeMethods
         WebPDecodeARGBInto_x64(data, (UIntPtr) data_size, output_buffer, output_buffer_size, output_stride);
     }
 
-    [DllImport(@"runtimes\win-x64\native\libwebp.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPDecodeARGBInto")]
-    private static extern IntPtr WebPDecodeARGBInto_x64([In] IntPtr data, UIntPtr data_size, IntPtr output_buffer, int output_buffer_size, int output_stride);
+    [LibraryImport(@"runtimes\win-x64\native\libwebp.dll", EntryPoint = "WebPDecodeARGBInto")]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    private static partial IntPtr WebPDecodeARGBInto_x64(IntPtr data, UIntPtr data_size, IntPtr output_buffer, int output_buffer_size, int output_stride);
 
     /// <summary>Initialize the configuration as empty. This function must always be called first, unless WebPGetFeatures() is to be called</summary>
     /// <param name="webPDecoderConfig">Configuration structure</param>
@@ -268,8 +275,9 @@ internal static partial class UnsafeNativeMethods
         return WebPInitDecoderConfigInternal_x64(ref webPDecoderConfig, WEBP_DECODER_ABI_VERSION);
     }
 
-    [DllImport(@"runtimes\win-x64\native\libwebp.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPInitDecoderConfigInternal")]
-    private static extern int WebPInitDecoderConfigInternal_x64(ref WebPDecoderConfig webPDecoderConfig, int WEBP_DECODER_ABI_VERSION);
+    [LibraryImport(@"runtimes\win-x64\native\libwebp.dll", EntryPoint = "WebPInitDecoderConfigInternal")]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    private static partial int WebPInitDecoderConfigInternal_x64(ref WebPDecoderConfig webPDecoderConfig, int WEBP_DECODER_ABI_VERSION);
 
     /// <summary>Decodes the full data at once, taking configuration into account</summary>
     /// <param name="data">WebP raw data to decode</param>
@@ -281,8 +289,9 @@ internal static partial class UnsafeNativeMethods
         return WebPDecode_x64(data, (UIntPtr) data_size, ref webPDecoderConfig);
     }
 
-    [DllImport(@"runtimes\win-x64\native\libwebp.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPDecode")]
-    private static extern VP8StatusCode WebPDecode_x64(IntPtr data, UIntPtr data_size, ref WebPDecoderConfig config);
+    [LibraryImport(@"runtimes\win-x64\native\libwebp.dll", EntryPoint = "WebPDecode")]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    private static partial VP8StatusCode WebPDecode_x64(IntPtr data, UIntPtr data_size, ref WebPDecoderConfig config);
 
     /// <summary>Free any memory associated with the buffer. Must always be called last. Doesn't free the 'buffer' structure itself</summary>
     /// <param name="buffer">WebPDecBuffer</param>
@@ -308,8 +317,9 @@ internal static partial class UnsafeNativeMethods
         return WebPEncodeBGR_x64(bgr, width, height, stride, quality_factor, out output);
     }
 
-    [DllImport(@"runtimes\win-x64\native\libwebp.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPEncodeBGR")]
-    private static extern int WebPEncodeBGR_x64([In] IntPtr bgr, int width, int height, int stride, float quality_factor, out IntPtr output);
+    [LibraryImport(@"runtimes\win-x64\native\libwebp.dll", EntryPoint = "WebPEncodeBGR")]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    private static partial int WebPEncodeBGR_x64(IntPtr bgr, int width, int height, int stride, float quality_factor, out IntPtr output);
 
     /// <summary>Lossy encoding images</summary>
     /// <param name="bgra">Pointer to BGRA image data</param>
@@ -324,8 +334,9 @@ internal static partial class UnsafeNativeMethods
         return WebPEncodeBGRA_x64(bgra, width, height, stride, quality_factor, out output);
     }
 
-    [DllImport(@"runtimes\win-x64\native\libwebp.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPEncodeBGRA")]
-    private static extern int WebPEncodeBGRA_x64([In] IntPtr bgra, int width, int height, int stride, float quality_factor, out IntPtr output);
+    [LibraryImport(@"runtimes\win-x64\native\libwebp.dll", EntryPoint = "WebPEncodeBGRA")]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    private static partial int WebPEncodeBGRA_x64(IntPtr bgra, int width, int height, int stride, float quality_factor, out IntPtr output);
 
     /// <summary>Lossless encoding images pointed to by *data in WebP format</summary>
     /// <param name="bgr">Pointer to BGR image data</param>
@@ -339,8 +350,9 @@ internal static partial class UnsafeNativeMethods
         return WebPEncodeLosslessBGR_x64(bgr, width, height, stride, out output);
     }
 
-    [DllImport(@"runtimes\win-x64\native\libwebp.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPEncodeLosslessBGR")]
-    private static extern int WebPEncodeLosslessBGR_x64([In] IntPtr bgr, int width, int height, int stride, out IntPtr output);
+    [LibraryImport(@"runtimes\win-x64\native\libwebp.dll", EntryPoint = "WebPEncodeLosslessBGR")]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    private static partial int WebPEncodeLosslessBGR_x64(IntPtr bgr, int width, int height, int stride, out IntPtr output);
 
     /// <summary>Lossless encoding images pointed to by *data in WebP format</summary>
     /// <param name="bgra">Pointer to BGRA image data</param>
@@ -354,8 +366,9 @@ internal static partial class UnsafeNativeMethods
         return WebPEncodeLosslessBGRA_x64(bgra, width, height, stride, out output);
     }
 
-    [DllImport(@"runtimes\win-x64\native\libwebp.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPEncodeLosslessBGRA")]
-    private static extern int WebPEncodeLosslessBGRA_x64([In] IntPtr bgra, int width, int height, int stride, out IntPtr output);
+    [LibraryImport(@"runtimes\win-x64\native\libwebp.dll", EntryPoint = "WebPEncodeLosslessBGRA")]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    private static partial int WebPEncodeLosslessBGRA_x64(IntPtr bgra, int width, int height, int stride, out IntPtr output);
 
     /// <summary>Releases memory returned by the WebPEncode</summary>
     /// <param name="p">Pointer to memory</param>
@@ -390,6 +403,7 @@ internal static partial class UnsafeNativeMethods
         return WebPPictureDistortion_x64(ref srcPicture, ref refPicture, metric_type, pResult);
     }
 
-    [DllImport(@"runtimes\win-x64\native\libwebp.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WebPPictureDistortion")]
-    private static extern int WebPPictureDistortion_x64(ref WebPPicture srcPicture, ref WebPPicture refPicture, int metric_type, IntPtr pResult);
+    [LibraryImport(@"runtimes\win-x64\native\libwebp.dll", EntryPoint = "WebPPictureDistortion")]
+    [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+    private static partial int WebPPictureDistortion_x64(ref WebPPicture srcPicture, ref WebPPicture refPicture, int metric_type, IntPtr pResult);
 }
