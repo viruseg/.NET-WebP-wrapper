@@ -100,5 +100,6 @@ internal struct WebPPicture
     public IntPtr memory_argb_;
 
     /// <summary>Padding for later use</summary>
-    private unsafe fixed uint pad7[2];
+    public IntPtr pad7_0,
+                  pad7_1;
 }

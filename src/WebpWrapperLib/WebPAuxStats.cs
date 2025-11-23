@@ -150,5 +150,5 @@ internal struct WebPAuxStats
     public int cross_color_transform_bits;
 
     /// <summary>Padding for later use</summary>
-    private unsafe fixed uint pad1[1];
+    private UInt32 pad1;
 }
