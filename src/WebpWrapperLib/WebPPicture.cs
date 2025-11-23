@@ -44,8 +44,7 @@ internal struct WebPPicture
     public int a_stride;
 
     /// <summary>Padding for later use</summary>
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2, ArraySubType = UnmanagedType.U4)]
-    private readonly uint[] pad1;
+    public unsafe fixed uint pad1[2];
 
     /// <summary>Pointer to ARGB (32 bit) plane</summary>
     public IntPtr argb;
@@ -54,8 +53,7 @@ internal struct WebPPicture
     public int argb_stride;
 
     /// <summary>Padding for later use</summary>
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3, ArraySubType = UnmanagedType.U4)]
-    private readonly uint[] pad2;
+    public unsafe fixed uint pad2[3];
 
     /// <summary>Byte-emission hook, to store compressed bytes as they are ready</summary>
     public IntPtr writer;
@@ -83,8 +81,7 @@ internal struct WebPPicture
     public IntPtr user_data;
 
     /// <summary>Padding for later use</summary>
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-    private readonly uint[] pad3;
+    public unsafe fixed uint pad3[3];
 
     /// <summary>Unused for now</summary>
     public IntPtr pad4;
@@ -93,8 +90,7 @@ internal struct WebPPicture
     public IntPtr pad5;
 
     /// <summary>Padding for later use</summary>
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-    private readonly uint[] pad6;
+    private unsafe fixed uint pad6[8];
 
     // PRIVATE FIELDS
     /// <summary>row chunk of memory for yuva planes</summary>
@@ -104,6 +100,5 @@ internal struct WebPPicture
     public IntPtr memory_argb_;
 
     /// <summary>Padding for later use</summary>
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-    private readonly IntPtr[] pad7;
+    private unsafe fixed uint pad7[2];
 }

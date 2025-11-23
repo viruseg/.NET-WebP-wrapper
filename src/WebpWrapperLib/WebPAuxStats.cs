@@ -150,6 +150,5 @@ internal struct WebPAuxStats
     public int cross_color_transform_bits;
 
     /// <summary>Padding for later use</summary>
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)]
-    private readonly IntPtr[] pad1;
+    private unsafe fixed uint pad1[1];
 }

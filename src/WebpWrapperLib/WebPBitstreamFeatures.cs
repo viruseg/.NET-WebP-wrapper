@@ -26,6 +26,5 @@ internal struct WebPBitstreamFeatures
     public int Format;
 
     /// <summary>Padding for later use</summary>
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5, ArraySubType = UnmanagedType.U4)]
-    private readonly uint[] pad;
+    public unsafe fixed uint pad[5];
 }
