@@ -845,8 +845,6 @@ public sealed class WebP : IDisposable
         return 1;
     }
 
-    private delegate int MyWriterDelegate([In] IntPtr data, UIntPtr data_size, ref WebPPicture picture);
-
     /// <summary>Free memory</summary>
     public void Dispose()
     {
