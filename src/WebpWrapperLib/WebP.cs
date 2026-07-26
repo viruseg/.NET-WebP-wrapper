@@ -56,9 +56,9 @@ public static class WebP
                 //Uncompress the image
                 var outputSize = bmpData.Stride * imgHeight;
                 if (bmp.PixelFormat == PixelFormat.Format24bppRgb)
-                    Methods.WebPDecodeBGRInto(pinnedWebP, (UIntPtr) rawWebP.Length, (byte*) bmpData.Scan0, (UIntPtr) outputSize, bmpData.Stride);
+                    Methods.WebPDecodeBGRInto(pinnedWebP, (nuint) rawWebP.Length, (byte*) bmpData.Scan0, (nuint) outputSize, bmpData.Stride);
                 else
-                    Methods.WebPDecodeBGRAInto(pinnedWebP, (UIntPtr) rawWebP.Length, (byte*) bmpData.Scan0, (UIntPtr) outputSize, bmpData.Stride);
+                    Methods.WebPDecodeBGRAInto(pinnedWebP, (nuint) rawWebP.Length, (byte*) bmpData.Scan0, (nuint) outputSize, bmpData.Stride);
 
                 return bmp;
             }
@@ -92,7 +92,7 @@ public static class WebP
             VP8StatusCode result;
             if (options.UseScaling)
             {
-                result = Methods.WebPGetFeatures((byte*) ptrRawWebP, (UIntPtr) rawWebP.Length, &config.input);
+                result = Methods.WebPGetFeatures((byte*) ptrRawWebP, (nuint) rawWebP.Length, &config.input);
                 if (result != VP8StatusCode.VP8_STATUS_OK) ThrowHelper.ThrowGetFeaturesException(result);
 
                 //Test cropping values
@@ -122,7 +122,7 @@ public static class WebP
             // Specify the output format
             config.output.u.RGBA.rgba = (byte*) bmpData.Scan0;
             config.output.u.RGBA.stride = bmpData.Stride;
-            config.output.u.RGBA.size = (UIntPtr) (bmp.Height * bmpData.Stride);
+            config.output.u.RGBA.size = (nuint) (bmp.Height * bmpData.Stride);
             config.output.height = bmp.Height;
             config.output.width = bmp.Width;
             config.output.is_external_memory = 1;
@@ -294,7 +294,7 @@ public static class WebP
             try
             {
                 var features = new WebPBitstreamFeatures();
-                var result = Methods.WebPGetFeatures(ptrRawWebP, (UIntPtr) rawWebP.Length, &features);
+                var result = Methods.WebPGetFeatures(ptrRawWebP, (nuint) rawWebP.Length, &features);
 
                 if (result != 0) ThrowHelper.ThrowException(result.ToString());
 
