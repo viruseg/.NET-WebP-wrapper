@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace WebpWrapperLib.WebPInterop;
+namespace WebpWrapper;
 
 public struct WebPConfig
 {

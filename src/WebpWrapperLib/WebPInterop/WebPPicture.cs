@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using WebpWrapper;
 using WebpWrapperLib.InteropAttribute;
 
 namespace WebpWrapperLib.WebPInterop;

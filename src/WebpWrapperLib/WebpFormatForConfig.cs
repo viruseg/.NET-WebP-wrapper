@@ -1,4 +1,4 @@
-﻿namespace WebpWrapperLib.WebPInterop;
+﻿namespace WebpWrapper;
 
 /// <summary>
 /// Format of image.

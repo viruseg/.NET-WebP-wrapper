@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
 using WebpWrapperLib.InteropAttribute;
 
-namespace WebpWrapperLib.WebPInterop;
+namespace WebpWrapper;
 
 /// <summary>Decoding options</summary>
 public struct WebPDecoderOptions

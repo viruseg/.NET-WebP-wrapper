@@ -1,3 +1,5 @@
+using WebpWrapper;
+
 namespace WebpWrapperLib.WebPInterop;
 
 internal struct WebPDecoderConfig

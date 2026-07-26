@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using WebpWrapperLib.InteropAttribute;
 
-namespace WebpWrapperLib.WebPInterop;
+namespace WebpWrapper;
 
 /// <summary>Structure for storing auxiliary statistics (mostly for lossy encoding)</summary>
 public struct WebPAuxStats

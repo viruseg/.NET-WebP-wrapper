@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
 using WebpWrapperLib.InteropAttribute;
 
-namespace WebpWrapperLib.WebPInterop;
+namespace WebpWrapper;
 
 /// <summary>Features gathered from the bit stream</summary>
 public readonly struct WebPBitstreamFeatures

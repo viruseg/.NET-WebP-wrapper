@@ -1,4 +1,4 @@
-namespace WebpWrapperLib.WebPInterop;
+namespace WebpWrapper;
 
 /// <summary>Enumerate some predefined settings for WebPConfig, depending on the type of source picture. These presets are used when calling WebPConfigPreset()</summary>
 public enum WebPPreset
