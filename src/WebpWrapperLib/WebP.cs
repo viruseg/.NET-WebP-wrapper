@@ -420,20 +420,22 @@ public static class WebP
             wpic.width = bmp.Width;
             wpic.height = bmp.Height;
 
+            long dataWebpSize;
             if (bmp.PixelFormat == PixelFormat.Format32bppArgb)
             {
                 //Put the bitmap componets in wpic
                 var result = Methods.WebPPictureImportBGRA(&wpic, (byte*) bmpData.Scan0, bmpData.Stride);
                 if (result != 1) ThrowHelper.ThrowWebPPictureImportBGRAException();
+                dataWebpSize = (long) bmp.Width * bmp.Height * 4L + 1024;
             }
             else
             {
                 //Put the bitmap contents in WebPPicture instance
                 var result = Methods.WebPPictureImportBGR(&wpic, (byte*) bmpData.Scan0, bmpData.Stride);
                 if (result != 1) ThrowHelper.ThrowWebPPictureImportBGRException();
+                dataWebpSize = (long) bmp.Width * bmp.Height * 3L + 1024;
             }
 
-            var dataWebpSize = (long) bmp.Width * bmp.Height;
 
             //Set up statistics of compression
             if (info)
@@ -448,7 +450,14 @@ public static class WebP
 
             try
             {
-                wpic.custom_ptr = (void*) dataWebpPtr;
+                var state = new EncodeState
+                {
+                    Buffer = (byte*) dataWebpPtr,
+                    Capacity = (nuint) dataWebpSize,
+                    Position = 0
+                };
+
+                wpic.custom_ptr = &state;
 
                 //Set up a byte-writing method (write-to-memory, in this case)
                 wpic.writer = &MyWriter;
@@ -462,12 +471,7 @@ public static class WebP
                 bmpData = null!;
 
                 //Copy webpData to rawWebP
-                var size = (int) ((nint) wpic.custom_ptr - (long) dataWebpPtr);
-                var dataWebp = new Span<byte>((void*) dataWebpPtr, size);
-
-                rawWebP = GC.AllocateUninitializedArray<byte>(size);
-                dataWebp.CopyTo(rawWebP);
-
+                rawWebP = new Span<byte>(state.Buffer, (int) state.Position).ToArray();
             }
             finally
             {
@@ -495,8 +499,24 @@ public static class WebP
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
     private static unsafe int MyWriter(byte* data, nuint data_size, WebPPicture* picture)
     {
-        Buffer.MemoryCopy(source: data, picture->custom_ptr, data_size, data_size);
-        picture->custom_ptr = (byte*)picture->custom_ptr + data_size;
+        var state = (EncodeState*)picture->custom_ptr;
+
+        if (state->Position + data_size > state->Capacity)
+            return 0;
+
+        Buffer.MemoryCopy(source: data,
+                          destination: state->Buffer + state->Position,
+                          destinationSizeInBytes: state->Capacity - state->Position,
+                          sourceBytesToCopy: data_size);
+
+        state->Position += data_size;
         return 1;
+    }
+
+    private struct EncodeState
+    {
+        public unsafe byte* Buffer;
+        public nuint Capacity;
+        public nuint Position;
     }
 }
