@@ -192,8 +192,7 @@ public static class WebP
             if (size == 0) ThrowHelper.ThrowEncodeException();
 
             //Copy image compress data to output array
-            var rawWebp = GC.AllocateUninitializedArray<byte>(size);
-            Marshal.Copy((IntPtr) unmanagedData, rawWebp, 0, size);
+            var rawWebp = new Span<byte>(unmanagedData, size).ToArray();
 
             return rawWebp;
         }
@@ -248,8 +247,7 @@ public static class WebP
                 : (int) Methods.WebPEncodeLosslessBGRA((byte*) bmpData.Scan0, bmp.Width, bmp.Height, bmpData.Stride, &unmanagedData);
 
             //Copy image compress data to output array
-            var rawWebp = GC.AllocateUninitializedArray<byte>(size);
-            Marshal.Copy((IntPtr) unmanagedData, rawWebp, 0, size);
+            var rawWebp = new Span<byte>(unmanagedData, size).ToArray();
 
             return rawWebp;
         }
