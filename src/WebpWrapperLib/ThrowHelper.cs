@@ -57,20 +57,6 @@ internal static class ThrowHelper
 
     [DoesNotReturn]
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public static void ThrowSaveException(string message)
-    {
-        throw new Exception($"{message}\r\nIn WebP.Save");
-    }
-
-    [DoesNotReturn]
-    [MethodImpl(MethodImplOptions.NoInlining)]
-    public static void ThrowThumbnailException(string message)
-    {
-        throw new Exception($"{message}\r\nIn WebP.Thumbnail");
-    }
-
-    [DoesNotReturn]
-    [MethodImpl(MethodImplOptions.NoInlining)]
     public static void ThrowAdvancedEncodeException(Exception exception)
     {
         throw new Exception("In WebP.AdvancedEncode.", exception);
@@ -162,43 +148,8 @@ internal static class ThrowHelper
 
     [DoesNotReturn]
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public static void ThrowConfigurePresetException()
-    {
-        throw new Exception("Can´t configure preset");
-    }
-
-    [DoesNotReturn]
-    [MethodImpl(MethodImplOptions.NoInlining)]
-    public static void ThrowConfigPresetException()
-    {
-        throw new Exception("Can´t config preset");
-    }
-
-    [DoesNotReturn]
-    [MethodImpl(MethodImplOptions.NoInlining)]
     public static void ThrowConfigurationParametersException()
     {
         throw new Exception("Bad configuration parameters");
-    }
-
-    [DoesNotReturn]
-    [MethodImpl(MethodImplOptions.NoInlining)]
-    public static void ThrowConfigureLosslessPresetException()
-    {
-        throw new Exception("Can´t configure lossless preset");
-    }
-
-    [DoesNotReturn]
-    [MethodImpl(MethodImplOptions.NoInlining)]
-    public static void ThrowDllVersionException()
-    {
-        throw new Exception("This DLL version not support EncodeNearLossless");
-    }
-
-    [DoesNotReturn]
-    [MethodImpl(MethodImplOptions.NoInlining)]
-    public static int ThrowInvalidPlatformException()
-    {
-        throw new InvalidOperationException("Invalid platform. Can not find proper function");
     }
 }
