@@ -81,7 +81,7 @@ public static class WebP
         BitmapData? bmpData = null;
         try
         {
-            WebPDecoderConfig config = default;
+            Unsafe.SkipInit(out WebPDecoderConfig config);
             if (Methods.WebPInitDecoderConfig(&config) == 0)
             {
                 ThrowHelper.ThrowInitDecoderConfigException();
@@ -293,7 +293,7 @@ public static class WebP
         {
             try
             {
-                var features = new WebPBitstreamFeatures();
+                Unsafe.SkipInit(out WebPBitstreamFeatures features);
                 var result = Methods.WebPGetFeatures(ptrRawWebP, (nuint) rawWebP.Length, &features);
 
                 if (result != 0) ThrowHelper.ThrowException(result.ToString());
