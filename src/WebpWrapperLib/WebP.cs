@@ -45,16 +45,18 @@ public static class WebP
             try
             {
                 //Get image width and height
-                GetInfo(rawWebP, out var imgWidth, out var imgHeight, out var hasAlpha, out _, out _);
+                Unsafe.SkipInit(out WebPBitstreamFeatures features);
+                var result = Methods.WebPGetFeatures(pinnedWebP, (nuint) rawWebP.Length, &features);
+                if (result != 0) ThrowHelper.ThrowException(result.ToString());
 
                 //Create a BitmapData and Lock all pixels to be written
-                bmp = hasAlpha
-                    ? new Bitmap(imgWidth, imgHeight, PixelFormat.Format32bppArgb)
-                    : new Bitmap(imgWidth, imgHeight, PixelFormat.Format24bppRgb);
-                bmpData = bmp.LockBits(new Rectangle(0, 0, imgWidth, imgHeight), ImageLockMode.WriteOnly, bmp.PixelFormat);
+                bmp = features.HasAlpha
+                    ? new Bitmap(features.Width, features.Height, PixelFormat.Format32bppArgb)
+                    : new Bitmap(features.Width, features.Height, PixelFormat.Format24bppRgb);
+                bmpData = bmp.LockBits(new Rectangle(0, 0, features.Width, features.Height), ImageLockMode.WriteOnly, bmp.PixelFormat);
 
                 //Uncompress the image
-                var outputSize = bmpData.Stride * imgHeight;
+                var outputSize = bmpData.Stride * features.Height;
                 if (bmp.PixelFormat == PixelFormat.Format24bppRgb)
                     Methods.WebPDecodeBGRInto(pinnedWebP, (nuint) rawWebP.Length, (byte*) bmpData.Scan0, (nuint) outputSize, bmpData.Stride);
                 else
@@ -98,7 +100,7 @@ public static class WebP
                 //Test cropping values
                 if (options.UseCropping)
                 {
-                    if (options.crop_left + options.crop_width > config.input.width || options.crop_top + options.crop_height > config.input.height)
+                    if (options.crop_left + options.crop_width > config.input.Width || options.crop_top + options.crop_height > config.input.Height)
                         ThrowHelper.ThrowCropException();
                 }
             }
@@ -106,15 +108,15 @@ public static class WebP
             config.options = options;
 
             //Create a BitmapData and Lock all pixels to be written
-            if (config.input.has_alpha == 1)
+            if (config.input.HasAlpha)
             {
                 config.output.colorspace = WEBP_CSP_MODE.MODE_bgrA;
-                bmp = new Bitmap(config.input.width, config.input.height, PixelFormat.Format32bppArgb);
+                bmp = new Bitmap(config.input.Width, config.input.Height, PixelFormat.Format32bppArgb);
             }
             else
             {
                 config.output.colorspace = WEBP_CSP_MODE.MODE_BGR;
-                bmp = new Bitmap(config.input.width, config.input.height, PixelFormat.Format24bppRgb);
+                bmp = new Bitmap(config.input.Width, config.input.Height, PixelFormat.Format24bppRgb);
             }
 
             bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, bmp.PixelFormat);
@@ -287,7 +289,7 @@ public static class WebP
     /// <param name="has_alpha">Image has alpha channel</param>
     /// <param name="has_animation">Image is a animation</param>
     /// <param name="format">Format of image</param>
-    public static unsafe void GetInfo(byte[] rawWebP, out int width, out int height, out bool has_alpha, out bool has_animation, out WebpFormat format)
+    public static unsafe WebPBitstreamFeatures GetInfo(byte[] rawWebP)
     {
         fixed (byte* ptrRawWebP = rawWebP)
         {
@@ -298,25 +300,12 @@ public static class WebP
 
                 if (result != 0) ThrowHelper.ThrowException(result.ToString());
 
-                width = features.width;
-                height = features.height;
-                has_alpha = features.has_alpha == 1;
-                has_animation = features.has_animation == 1;
-                format = features.format switch
-                {
-                    1 => WebpFormat.Lossy,
-                    2 => WebpFormat.Lossless,
-                    _ => WebpFormat.Undefined
-                };
+                return features;
             }
             catch (Exception ex)
             {
                 ThrowHelper.ThrowGetInfoException(ex.Message);
-                width = 0;
-                height = 0;
-                has_alpha = false;
-                has_animation = false;
-                format = default;
+                return default;
             }
         }
     }
