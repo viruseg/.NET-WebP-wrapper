@@ -33,13 +33,13 @@ public static class WebP
     }
 
     /// <summary>Decode a WebP image</summary>
-    /// <param name="rawWebP">The data to uncompress</param>
+    /// <param name="rawWebp">The data to uncompress</param>
     /// <returns>Bitmap with the WebP image</returns>
-    public static unsafe Bitmap Decode(ReadOnlySpan<byte> rawWebP)
+    public static unsafe Bitmap Decode(ReadOnlySpan<byte> rawWebp)
     {
-        if (rawWebP.Length == 0) ThrowHelper.ThrowException("RawWebP is void");
+        if (rawWebp.Length == 0) ThrowHelper.ThrowException("RawWebp is void");
 
-        fixed (byte* pinnedWebP = rawWebP)
+        fixed (byte* pinnedWebP = rawWebp)
         {
             Bitmap? bmp = null;
             BitmapData? bmpData = null;
@@ -47,7 +47,7 @@ public static class WebP
 
             //Get image width and height
             Unsafe.SkipInit(out WebPBitstreamFeatures features);
-            var result = Methods.WebPGetFeatures(pinnedWebP, (nuint) rawWebP.Length, &features);
+            var result = Methods.WebPGetFeatures(pinnedWebP, (nuint) rawWebp.Length, &features);
             if (result != VP8StatusCode.VP8_STATUS_OK) ThrowHelper.ThrowException(result.ToString());
 
             try
@@ -62,8 +62,8 @@ public static class WebP
                 //Uncompress the image
                 var outputSize = bmpData.Stride * features.Height;
                 var decodedPtr = bmp.PixelFormat == PixelFormat.Format24bppRgb
-                    ? Methods.WebPDecodeBGRInto(pinnedWebP, (nuint) rawWebP.Length, (byte*) bmpData.Scan0, (nuint) outputSize, bmpData.Stride)
-                    : Methods.WebPDecodeBGRAInto(pinnedWebP, (nuint) rawWebP.Length, (byte*) bmpData.Scan0, (nuint) outputSize, bmpData.Stride);
+                    ? Methods.WebPDecodeBGRInto(pinnedWebP, (nuint) rawWebp.Length, (byte*) bmpData.Scan0, (nuint) outputSize, bmpData.Stride)
+                    : Methods.WebPDecodeBGRAInto(pinnedWebP, (nuint) rawWebp.Length, (byte*) bmpData.Scan0, (nuint) outputSize, bmpData.Stride);
 
                 if (decodedPtr == null) ThrowHelper.ThrowException("Failed to decode WebP image.");
 
@@ -79,14 +79,14 @@ public static class WebP
     }
 
     /// <summary>Decode a WebP image</summary>
-    /// <param name="rawWebP">the data to uncompress</param>
+    /// <param name="rawWebp">the data to uncompress</param>
     /// <param name="options">Options for advanced decode</param>
     /// <returns>Bitmap with the WebP image</returns>
-    public static unsafe Bitmap Decode(ReadOnlySpan<byte> rawWebP, WebPDecoderOptions options)
+    public static unsafe Bitmap Decode(ReadOnlySpan<byte> rawWebp, WebPDecoderOptions options)
     {
-        if (rawWebP.Length == 0) ThrowHelper.ThrowException("RawWebP is void");
+        if (rawWebp.Length == 0) ThrowHelper.ThrowException("RawWebp is void");
 
-        fixed (byte* ptrRawWebP = rawWebP)
+        fixed (byte* ptrRawWebp = rawWebp)
         {
             Bitmap? bmp = null;
             BitmapData? bmpData = null;
@@ -95,7 +95,7 @@ public static class WebP
             Unsafe.SkipInit(out WebPDecoderConfig config);
             if (Methods.WebPInitDecoderConfig(&config) == 0) ThrowHelper.ThrowInitDecoderConfigException();
 
-            var result = Methods.WebPGetFeatures(ptrRawWebP, (nuint) rawWebP.Length, &config.input);
+            var result = Methods.WebPGetFeatures(ptrRawWebp, (nuint) rawWebp.Length, &config.input);
             if (result != VP8StatusCode.VP8_STATUS_OK) ThrowHelper.ThrowGetFeaturesException(result);
 
             // Validate cropping independently of scaling.
@@ -146,7 +146,7 @@ public static class WebP
                 config.output.is_external_memory = 1;
 
                 // Decode
-                result = Methods.WebPDecode(ptrRawWebP, (nuint) rawWebP.Length, &config);
+                result = Methods.WebPDecode(ptrRawWebp, (nuint) rawWebp.Length, &config);
                 if (result != VP8StatusCode.VP8_STATUS_OK) ThrowHelper.ThrowGetFeaturesException(result);
 
                 Methods.WebPFreeDecBuffer(&config.output);
@@ -192,10 +192,10 @@ public static class WebP
             if (size == 0) ThrowHelper.ThrowEncodeException();
 
             //Copy image compress data to output array
-            var rawWebP = GC.AllocateUninitializedArray<byte>(size);
-            Marshal.Copy((IntPtr) unmanagedData, rawWebP, 0, size);
+            var rawWebp = GC.AllocateUninitializedArray<byte>(size);
+            Marshal.Copy((IntPtr) unmanagedData, rawWebp, 0, size);
 
-            return rawWebP;
+            return rawWebp;
         }
         finally
         {
@@ -248,10 +248,10 @@ public static class WebP
                 : (int) Methods.WebPEncodeLosslessBGRA((byte*) bmpData.Scan0, bmp.Width, bmp.Height, bmpData.Stride, &unmanagedData);
 
             //Copy image compress data to output array
-            var rawWebP = GC.AllocateUninitializedArray<byte>(size);
-            Marshal.Copy((IntPtr) unmanagedData, rawWebP, 0, size);
+            var rawWebp = GC.AllocateUninitializedArray<byte>(size);
+            Marshal.Copy((IntPtr) unmanagedData, rawWebp, 0, size);
 
-            return rawWebP;
+            return rawWebp;
         }
         finally
         {
@@ -280,16 +280,16 @@ public static class WebP
     }
 
     /// <summary>Get info of WEBP data</summary>
-    /// <param name="rawWebP">The data of WebP</param>
+    /// <param name="rawWebp">The data of WebP</param>
     /// <returns>Info of WebP</returns>
-    public static unsafe WebPBitstreamFeatures GetInfo(ReadOnlySpan<byte> rawWebP)
+    public static unsafe WebPBitstreamFeatures GetInfo(ReadOnlySpan<byte> rawWebp)
     {
-        if (rawWebP.Length == 0) ThrowHelper.ThrowException("RawWebP is void");
+        if (rawWebp.Length == 0) ThrowHelper.ThrowException("RawWebp is void");
 
-        fixed (byte* ptrRawWebP = rawWebP)
+        fixed (byte* ptrRawWebp = rawWebp)
         {
             Unsafe.SkipInit(out WebPBitstreamFeatures features);
-            var result = Methods.WebPGetFeatures(ptrRawWebP, (nuint) rawWebP.Length, &features);
+            var result = Methods.WebPGetFeatures(ptrRawWebp, (nuint) rawWebp.Length, &features);
 
             if (result != VP8StatusCode.VP8_STATUS_OK) ThrowHelper.ThrowException(result.ToString());
 
@@ -300,9 +300,9 @@ public static class WebP
     /// <summary>Compute PSNR, SSIM or LSIM distortion metric between two pictures. Warning: this function is rather CPU-intensive</summary>
     /// <param name="source">Picture to measure</param>
     /// <param name="reference">Reference picture</param>
-    /// <param name="metric_type">0 = PSNR, 1 = SSIM, 2 = LSIM</param>
+    /// <param name="metricType">0 = PSNR, 1 = SSIM, 2 = LSIM</param>
     /// <returns>dB in the Y/U/V/Alpha/All order</returns>
-    public static unsafe float[] GetPictureDistortion(Bitmap source, Bitmap reference, int metric_type)
+    public static unsafe float[] GetPictureDistortion(Bitmap source, Bitmap reference, int metricType)
     {
         var wpicSource = new WebPPicture();
         var wpicReference = new WebPPicture();
@@ -313,7 +313,7 @@ public static class WebP
         {
             if (source == null) ThrowHelper.ThrowException("Source picture is void");
             if (reference == null) ThrowHelper.ThrowException("Reference picture is void");
-            if (metric_type is < 0 or > 2) ThrowHelper.ThrowException("Bad metric_type. Use 0 = PSNR, 1 = SSIM, 2 = LSIM");
+            if (metricType is < 0 or > 2) ThrowHelper.ThrowException("Bad metric_type. Use 0 = PSNR, 1 = SSIM, 2 = LSIM");
             if (source.Width != reference.Width || source.Height != reference.Height) ThrowHelper.ThrowException("Source and Reference pictures have different dimensions");
 
             // Setup the source picture data, allocating the bitmap, width and height
@@ -361,7 +361,7 @@ public static class WebP
 
             fixed (float* ptrResult = result)
             {
-                if (Methods.WebPPictureDistortion(&wpicSource, &wpicReference, metric_type, ptrResult) != 1)
+                if (Methods.WebPPictureDistortion(&wpicSource, &wpicReference, metricType, ptrResult) != 1)
                     ThrowHelper.ThrowException("Can´t measure.");
             }
 
@@ -430,7 +430,7 @@ public static class WebP
                 wpic.stats = ptrStats;
             }
 
-            byte[] rawWebP;
+            byte[] rawWebp;
             var dataWebpPtr = Marshal.AllocHGlobal((nint) dataWebpSize);
 
             try
@@ -453,8 +453,7 @@ public static class WebP
                 bmp.UnlockBits(bmpData);
                 bmpData = null!;
 
-                //Copy webpData to rawWebP
-                rawWebP = new Span<byte>(state.Buffer, (int) state.Position).ToArray();
+                rawWebp = new Span<byte>(state.Buffer, (int) state.Position).ToArray();
             }
             finally
             {
@@ -463,7 +462,7 @@ public static class WebP
 
             stats = info && ptrStats != null ? *ptrStats : default;
 
-            return rawWebP;
+            return rawWebp;
         }
         finally
         {
@@ -474,19 +473,19 @@ public static class WebP
     }
 
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
-    private static unsafe int MyWriter(byte* data, nuint data_size, WebPPicture* picture)
+    private static unsafe int MyWriter(byte* data, nuint dataSize, WebPPicture* picture)
     {
         var state = (EncodeState*)picture->custom_ptr;
 
-        if (state->Position + data_size > state->Capacity)
+        if (state->Position + dataSize > state->Capacity)
             return 0;
 
         Buffer.MemoryCopy(source: data,
                           destination: state->Buffer + state->Position,
                           destinationSizeInBytes: state->Capacity - state->Position,
-                          sourceBytesToCopy: data_size);
+                          sourceBytesToCopy: dataSize);
 
-        state->Position += data_size;
+        state->Position += dataSize;
         return 1;
     }
 
