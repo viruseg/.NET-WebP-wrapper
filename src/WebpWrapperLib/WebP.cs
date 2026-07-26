@@ -47,7 +47,7 @@ public static class WebP
                 //Get image width and height
                 Unsafe.SkipInit(out WebPBitstreamFeatures features);
                 var result = Methods.WebPGetFeatures(pinnedWebP, (nuint) rawWebP.Length, &features);
-                if (result != 0) ThrowHelper.ThrowException(result.ToString());
+                if (result != VP8StatusCode.VP8_STATUS_OK) ThrowHelper.ThrowException(result.ToString());
 
                 //Create a BitmapData and Lock all pixels to be written
                 bmp = features.HasAlpha
@@ -298,7 +298,7 @@ public static class WebP
                 Unsafe.SkipInit(out WebPBitstreamFeatures features);
                 var result = Methods.WebPGetFeatures(ptrRawWebP, (nuint) rawWebP.Length, &features);
 
-                if (result != 0) ThrowHelper.ThrowException(result.ToString());
+                if (result != VP8StatusCode.VP8_STATUS_OK) ThrowHelper.ThrowException(result.ToString());
 
                 return features;
             }
