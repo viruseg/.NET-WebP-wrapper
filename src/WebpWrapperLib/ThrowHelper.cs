@@ -15,9 +15,9 @@ internal static class ThrowHelper
 
     [DoesNotReturn]
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public static void ThrowEncodeLosslessException(string message)
+    public static void ThrowEncodeLosslessException(Exception exception)
     {
-        throw new Exception($"{message}\r\nIn WebP.EncodeLossless (Simple)");
+        throw new Exception("In WebP.EncodeLossless (Simple).", exception);
     }
 
     [DoesNotReturn]
@@ -29,30 +29,30 @@ internal static class ThrowHelper
 
     [DoesNotReturn]
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public static void ThrowGetPictureDistortionException(string message)
+    public static void ThrowGetPictureDistortionException(Exception exception)
     {
-        throw new Exception($"{message}\r\nIn WebP.GetPictureDistortion");
+        throw new Exception("In WebP.GetPictureDistortion.", exception);
     }
 
     [DoesNotReturn]
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public static void ThrowGetVersionException(string message)
+    public static void ThrowGetVersionException(Exception exception)
     {
-        throw new Exception($"{message}\r\nIn WebP.GetVersion");
+        throw new Exception("In WebP.GetVersion.", exception);
     }
 
     [DoesNotReturn]
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public static void ThrowGetInfoException(string message)
+    public static void ThrowGetInfoException(Exception exception)
     {
-        throw new Exception($"{message}\r\nIn WebP.GetInfo");
+        throw new Exception("In WebP.GetInfo", exception);
     }
 
     [DoesNotReturn]
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public static void ThrowDecodeException(string message)
+    public static void ThrowDecodeException(Exception exception)
     {
-        throw new Exception($"{message}\r\nIn WebP.Decode");
+        throw new Exception("In WebP.Decode.", exception);
     }
 
     [DoesNotReturn]
@@ -71,16 +71,16 @@ internal static class ThrowHelper
 
     [DoesNotReturn]
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public static void ThrowAdvancedEncodeException(string message)
+    public static void ThrowAdvancedEncodeException(Exception exception)
     {
-        throw new Exception($"{message}\r\nIn WebP.AdvancedEncode");
+        throw new Exception("In WebP.AdvancedEncode.", exception);
     }
 
     [DoesNotReturn]
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public static void ThrowEncodeLosslyException(string message)
+    public static void ThrowEncodeLosslyException(Exception exception)
     {
-        throw new Exception($"{message}\r\nIn WebP.EncodeLossly");
+        throw new Exception("In WebP.EncodeLossly.", exception);
     }
 
     [DoesNotReturn]

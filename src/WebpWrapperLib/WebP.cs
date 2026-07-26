@@ -139,7 +139,7 @@ public static class WebP
         }
         catch (Exception ex)
         {
-            ThrowHelper.ThrowDecodeException(ex.Message);
+            ThrowHelper.ThrowDecodeException(ex);
             return null;
         }
         finally
@@ -187,7 +187,7 @@ public static class WebP
         }
         catch (Exception ex)
         {
-            ThrowHelper.ThrowEncodeLosslyException(ex.Message);
+            ThrowHelper.ThrowEncodeLosslyException(ex);
             return null;
         }
         finally
@@ -250,7 +250,7 @@ public static class WebP
         }
         catch (Exception ex)
         {
-            ThrowHelper.ThrowEncodeLosslessException(ex.Message);
+            ThrowHelper.ThrowEncodeLosslessException(ex);
             return null;
         }
         finally
@@ -277,7 +277,7 @@ public static class WebP
         }
         catch (Exception ex)
         {
-            ThrowHelper.ThrowGetVersionException(ex.Message);
+            ThrowHelper.ThrowGetVersionException(ex);
             return null;
         }
     }
@@ -304,7 +304,7 @@ public static class WebP
             }
             catch (Exception ex)
             {
-                ThrowHelper.ThrowGetInfoException(ex.Message);
+                ThrowHelper.ThrowGetInfoException(ex);
                 return default;
             }
         }
@@ -381,7 +381,7 @@ public static class WebP
         }
         catch (Exception ex)
         {
-            ThrowHelper.ThrowGetPictureDistortionException(ex.Message);
+            ThrowHelper.ThrowGetPictureDistortionException(ex);
             return null;
         }
         finally
@@ -486,7 +486,7 @@ public static class WebP
         }
         catch (Exception ex)
         {
-            ThrowHelper.ThrowAdvancedEncodeException(ex.Message);
+            ThrowHelper.ThrowAdvancedEncodeException(ex);
             stats = default;
             return null;
         }
