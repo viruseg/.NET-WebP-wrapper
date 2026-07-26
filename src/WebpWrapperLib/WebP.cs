@@ -162,6 +162,8 @@ public static class WebP
     /// <returns>Compressed data</returns>
     public static unsafe byte[] EncodeLossy(Bitmap bmp, int quality = 75)
     {
+        quality = Math.Clamp(quality, 0, 100);
+
         //test bmp
         if (bmp == null) ThrowHelper.ThrowException("Bmp picture is void");
         if (bmp.Width == 0 || bmp.Height == 0) ThrowHelper.ThrowBitmapNoDataException(nameof(bmp));
