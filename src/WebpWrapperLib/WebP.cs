@@ -282,11 +282,7 @@ public static class WebP
 
     /// <summary>Get info of WEBP data</summary>
     /// <param name="rawWebP">The data of WebP</param>
-    /// <param name="width">width of image</param>
-    /// <param name="height">height of image</param>
-    /// <param name="has_alpha">Image has alpha channel</param>
-    /// <param name="has_animation">Image is a animation</param>
-    /// <param name="format">Format of image</param>
+    /// <returns>Info of WebP</returns>
     public static unsafe WebPBitstreamFeatures GetInfo(byte[] rawWebP)
     {
         fixed (byte* ptrRawWebP = rawWebP)
