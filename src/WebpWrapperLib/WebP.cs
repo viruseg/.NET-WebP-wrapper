@@ -404,8 +404,6 @@ public static class WebP
             wpic.width = bmp.Width;
             wpic.height = bmp.Height;
 
-            wpic.use_argb = 1;
-
             long dataWebpSize;
             if (bmp.PixelFormat == PixelFormat.Format32bppArgb)
             {
@@ -413,6 +411,7 @@ public static class WebP
                 var result = Methods.WebPPictureImportBGRA(&wpic, (byte*) bmpData.Scan0, bmpData.Stride);
                 if (result != 1) ThrowHelper.ThrowWebPPictureImportBGRAException();
                 dataWebpSize = (long) bmp.Width * bmp.Height * 4L + 65536;
+                wpic.use_argb = 1;
             }
             else
             {
@@ -420,6 +419,7 @@ public static class WebP
                 var result = Methods.WebPPictureImportBGR(&wpic, (byte*) bmpData.Scan0, bmpData.Stride);
                 if (result != 1) ThrowHelper.ThrowWebPPictureImportBGRException();
                 dataWebpSize = (long) bmp.Width * bmp.Height * 3L + 1024;
+                wpic.use_argb = 0;
             }
 
             //Set up statistics of compression
