@@ -35,8 +35,10 @@ public static class WebP
     /// <summary>Decode a WebP image</summary>
     /// <param name="rawWebP">The data to uncompress</param>
     /// <returns>Bitmap with the WebP image</returns>
-    public static unsafe Bitmap Decode(byte[] rawWebP)
+    public static unsafe Bitmap Decode(ReadOnlySpan<byte> rawWebP)
     {
+        if (rawWebP.Length == 0) ThrowHelper.ThrowException("RawWebP is void");
+
         fixed (byte* pinnedWebP = rawWebP)
         {
             Bitmap? bmp = null;
@@ -80,8 +82,10 @@ public static class WebP
     /// <param name="rawWebP">the data to uncompress</param>
     /// <param name="options">Options for advanced decode</param>
     /// <returns>Bitmap with the WebP image</returns>
-    public static unsafe Bitmap Decode(byte[] rawWebP, WebPDecoderOptions options)
+    public static unsafe Bitmap Decode(ReadOnlySpan<byte> rawWebP, WebPDecoderOptions options)
     {
+        if (rawWebP.Length == 0) ThrowHelper.ThrowException("RawWebP is void");
+
         fixed (byte* ptrRawWebP = rawWebP)
         {
             Bitmap? bmp = null;
@@ -278,8 +282,10 @@ public static class WebP
     /// <summary>Get info of WEBP data</summary>
     /// <param name="rawWebP">The data of WebP</param>
     /// <returns>Info of WebP</returns>
-    public static unsafe WebPBitstreamFeatures GetInfo(byte[] rawWebP)
+    public static unsafe WebPBitstreamFeatures GetInfo(ReadOnlySpan<byte> rawWebP)
     {
+        if (rawWebP.Length == 0) ThrowHelper.ThrowException("RawWebP is void");
+
         fixed (byte* ptrRawWebP = rawWebP)
         {
             Unsafe.SkipInit(out WebPBitstreamFeatures features);
