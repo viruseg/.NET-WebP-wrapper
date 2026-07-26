@@ -41,6 +41,7 @@ public static class WebP
         {
             Bitmap? bmp = null;
             BitmapData? bmpData = null;
+            var success = false;
 
             try
             {
@@ -57,16 +58,19 @@ public static class WebP
 
                 //Uncompress the image
                 var outputSize = bmpData.Stride * features.Height;
-                if (bmp.PixelFormat == PixelFormat.Format24bppRgb)
-                    Methods.WebPDecodeBGRInto(pinnedWebP, (nuint) rawWebP.Length, (byte*) bmpData.Scan0, (nuint) outputSize, bmpData.Stride);
-                else
-                    Methods.WebPDecodeBGRAInto(pinnedWebP, (nuint) rawWebP.Length, (byte*) bmpData.Scan0, (nuint) outputSize, bmpData.Stride);
+                var decodedPtr = bmp.PixelFormat == PixelFormat.Format24bppRgb
+                    ? Methods.WebPDecodeBGRInto(pinnedWebP, (nuint) rawWebP.Length, (byte*) bmpData.Scan0, (nuint) outputSize, bmpData.Stride)
+                    : Methods.WebPDecodeBGRAInto(pinnedWebP, (nuint) rawWebP.Length, (byte*) bmpData.Scan0, (nuint) outputSize, bmpData.Stride);
 
+                if (decodedPtr == null) ThrowHelper.ThrowException("Failed to decode WebP image.");
+
+                success = true;
                 return bmp;
             }
             finally
             {
                 if (bmpData != null) bmp?.UnlockBits(bmpData);
+                if (!success) bmp?.Dispose();
             }
         }
     }
