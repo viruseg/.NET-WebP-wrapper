@@ -226,6 +226,7 @@ public static class WebP
     public static unsafe byte[] EncodeLossless(Bitmap bmp)
     {
         //test bmp
+        if (bmp == null) ThrowHelper.ThrowException("Bmp picture is void");
         if (bmp.Width == 0 || bmp.Height == 0) ThrowHelper.ThrowBitmapNoDataException(nameof(bmp));
         if (bmp.Width > Methods.WEBP_MAX_DIMENSION || bmp.Height > Methods.WEBP_MAX_DIMENSION) ThrowHelper.ThrowBitmapDimensionException(Methods.WEBP_MAX_DIMENSION);
         if (bmp.PixelFormat != PixelFormat.Format24bppRgb && bmp.PixelFormat != PixelFormat.Format32bppArgb) ThrowHelper.ThrowBitmapPixelFormatException();
