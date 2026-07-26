@@ -27,7 +27,7 @@ using Bitmap bmp = WebP.Decode(rawWebp);
 Advanced decode WebP to bitmap
 ```C#
 byte[] rawWebp = File.ReadAllBytes("test.webp");
-using bmp = WebP.Decode(rawWebp, new WebPDecoderOptions { UseThreads = true, Flip = true });
+using Bitmap bmp = WebP.Decode(rawWebp, new WebPDecoderOptions { UseThreads = true, Flip = true });
 ```
 
 
