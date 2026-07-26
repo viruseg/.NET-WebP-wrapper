@@ -28,7 +28,7 @@ public static class WebP
 
         var result = Methods.WebPConfigPreset(&tempConfig, preset, quality);
 
-        config = tempConfig;
+        config = result != 0 ? tempConfig : default;
         return result;
     }
 
