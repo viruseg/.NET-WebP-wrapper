@@ -81,6 +81,8 @@ public static class WebP
         {
             Bitmap? bmp = null;
             BitmapData? bmpData = null;
+            var success = false;
+
             try
             {
                 Unsafe.SkipInit(out WebPDecoderConfig config);
@@ -134,6 +136,7 @@ public static class WebP
 
                 Methods.WebPFreeDecBuffer(&config.output);
 
+                success = true;
                 return bmp;
             }
             catch (Exception ex)
@@ -144,9 +147,9 @@ public static class WebP
             finally
             {
                 if (bmpData != null) bmp?.UnlockBits(bmpData);
+                if (!success) bmp?.Dispose();
             }
         }
-
     }
 
     /// <summary>Lossy encoding bitmap to WebP (Simple encoding API)</summary>
