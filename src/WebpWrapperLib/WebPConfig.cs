@@ -291,7 +291,7 @@ public struct WebPConfig
         set => emulate_jpeg_size = value ? 1 : 0;
     }
 
-    /// <summary>If non-zero, try and use multi-threaded encoding.</summary>
+    /// <summary>If true, try and use multi-threaded encoding.</summary>
     public bool ThreadLevel
     {
         get => thread_level == 1;
