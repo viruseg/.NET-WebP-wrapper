@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using WebpWrapperLib.WebPInterop;
 
 namespace WebpWrapper;
 

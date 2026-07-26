@@ -1,25 +1,24 @@
-﻿// Wrapper for WebP format in C#. (MIT)
-// Copyright (c) 2020 Jose M. Piñeiro
-// Copyright (c) 2025 Denis Tulupov
+using WebpWrapperLib.InteropAttribute;
 
-using System.Runtime.InteropServices;
+namespace WebpWrapperLib.WebPInterop;
 
-namespace WebpWrapper;
-
-[StructLayout(LayoutKind.Sequential)]
-internal struct WebPYUVABuffer
+internal unsafe struct WebPYUVABuffer
 {
     /// <summary>Pointer to luma samples</summary>
-    public IntPtr y;
+    [NativeTypeName("uint8_t *")]
+    public byte* y;
 
     /// <summary>Pointer to chroma U samples</summary>
-    public IntPtr u;
+    [NativeTypeName("uint8_t *")]
+    public byte* u;
 
     /// <summary>Pointer to chroma V samples</summary>
-    public IntPtr v;
+    [NativeTypeName("uint8_t *")]
+    public byte* v;
 
     /// <summary>Pointer to alpha samples</summary>
-    public IntPtr a;
+    [NativeTypeName("uint8_t *")]
+    public byte* a;
 
     /// <summary>Luma stride</summary>
     public int y_stride;
@@ -34,14 +33,18 @@ internal struct WebPYUVABuffer
     public int a_stride;
 
     /// <summary>Luma plane size</summary>
-    public UIntPtr y_size;
+    [NativeTypeName("size_t")]
+    public nuint y_size;
 
     /// <summary>Chroma plane U size</summary>
-    public UIntPtr u_size;
+    [NativeTypeName("size_t")]
+    public nuint u_size;
 
     /// <summary>Chroma plane V size</summary>
-    public UIntPtr v_size;
+    [NativeTypeName("size_t")]
+    public nuint v_size;
 
     /// <summary>Alpha plane size</summary>
-    public UIntPtr a_size;
+    [NativeTypeName("size_t")]
+    public nuint a_size;
 }

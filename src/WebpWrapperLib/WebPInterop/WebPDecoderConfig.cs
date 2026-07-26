@@ -1,12 +1,5 @@
-﻿// Wrapper for WebP format in C#. (MIT)
-// Copyright (c) 2020 Jose M. Piñeiro
-// Copyright (c) 2025 Denis Tulupov
+namespace WebpWrapperLib.WebPInterop;
 
-using System.Runtime.InteropServices;
-
-namespace WebpWrapper;
-
-[StructLayout(LayoutKind.Sequential)]
 internal struct WebPDecoderConfig
 {
     /// <summary>Immutable bit stream features (optional)</summary>

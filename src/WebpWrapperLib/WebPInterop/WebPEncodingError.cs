@@ -1,10 +1,5 @@
-﻿// Wrapper for WebP format in C#. (MIT)
-// Copyright (c) 2020 Jose M. Piñeiro
-// Copyright (c) 2025 Denis Tulupov
+namespace WebpWrapperLib.WebPInterop;
 
-namespace WebpWrapper;
-
-/// <summary>Encoding error conditions</summary>
 internal enum WebPEncodingError
 {
     /// <summary>No error</summary>

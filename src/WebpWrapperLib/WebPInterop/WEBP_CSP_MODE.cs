@@ -1,8 +1,4 @@
-﻿// Wrapper for WebP format in C#. (MIT)
-// Copyright (c) 2020 Jose M. Piñeiro
-// Copyright (c) 2025 Denis Tulupov
-
-namespace WebpWrapper;
+namespace WebpWrapperLib.WebPInterop;
 
 /// <summary>Describes the byte-ordering of packed samples in memory</summary>
 internal enum WEBP_CSP_MODE

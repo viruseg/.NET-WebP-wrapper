@@ -1,14 +1,11 @@
-﻿// Wrapper for WebP format in C#. (MIT)
-// Copyright (c) 2020 Jose M. Piñeiro
-// Copyright (c) 2025 Denis Tulupov
-
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using WebpWrapperLib.InteropAttribute;
 
-namespace WebpWrapper;
+namespace WebpWrapperLib.WebPInterop;
 
 /// <summary>Output buffer</summary>
-[StructLayout(LayoutKind.Sequential)]
-internal struct WebPDecBuffer
+internal unsafe struct WebPDecBuffer
 {
     /// <summary>Color space</summary>
     public WEBP_CSP_MODE colorspace;
@@ -23,20 +20,31 @@ internal struct WebPDecBuffer
     public int is_external_memory;
 
     /// <summary>Output buffer parameters</summary>
-    public RGBA_YUVA_Buffer u;
+    [NativeTypeName("__AnonymousRecord_decode_L223_C3")]
+    public _u_e__Union u;
 
     /// <summary>Padding for later use</summary>
-    private readonly UInt32 pad1;
-
-    /// <summary>Padding for later use</summary>
-    private readonly UInt32 pad2;
-
-    /// <summary>Padding for later use</summary>
-    private readonly UInt32 pad3;
-
-    /// <summary>Padding for later use</summary>
-    private readonly UInt32 pad4;
-
+    [NativeTypeName("uint32_t[4]")]
+    public _pad_e__FixedBuffer pad;
     /// <summary>Internally allocated memory (only when is_external_memory is 0). Should not be used externally, but accessed via WebPRGBABuffer</summary>
-    public IntPtr private_memory;
+
+    [NativeTypeName("uint8_t *")]
+    public byte* private_memory;
+
+    /// <summary>Union of buffer parameters</summary>
+    [StructLayout(LayoutKind.Explicit)]
+    public struct _u_e__Union
+    {
+        [FieldOffset(0)]
+        public WebPRGBABuffer RGBA;
+
+        [FieldOffset(0)]
+        public WebPYUVABuffer YUVA;
+    }
+
+    [InlineArray(4)]
+    public struct _pad_e__FixedBuffer
+    {
+        public uint e0;
+    }
 }

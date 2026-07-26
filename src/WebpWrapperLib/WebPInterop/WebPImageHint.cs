@@ -1,10 +1,5 @@
-﻿// Wrapper for WebP format in C#. (MIT)
-// Copyright (c) 2020 Jose M. Piñeiro
-// Copyright (c) 2025 Denis Tulupov
+namespace WebpWrapperLib.WebPInterop;
 
-namespace WebpWrapper;
-
-/// <summary>Image characteristics hint for the underlying encoder</summary>
 public enum WebPImageHint
 {
     /// <summary>Default preset</summary>

@@ -1,8 +1,4 @@
-﻿// Wrapper for WebP format in C#. (MIT)
-// Copyright (c) 2020 Jose M. Piñeiro
-// Copyright (c) 2025 Denis Tulupov
-
-namespace WebpWrapper;
+namespace WebpWrapperLib.WebPInterop;
 
 /// <summary>Enumeration of the status codes</summary>
 internal enum VP8StatusCode

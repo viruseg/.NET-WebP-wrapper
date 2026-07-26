@@ -1,8 +1,4 @@
-﻿// Wrapper for WebP format in C#. (MIT)
-// Copyright (c) 2020 Jose M. Piñeiro
-// Copyright (c) 2025 Denis Tulupov
-
-namespace WebpWrapper;
+namespace WebpWrapperLib.WebPInterop;
 
 /// <summary>Enumerate some predefined settings for WebPConfig, depending on the type of source picture. These presets are used when calling WebPConfigPreset()</summary>
 public enum WebPPreset
@@ -23,5 +19,5 @@ public enum WebPPreset
     WEBP_PRESET_ICON,
 
     /// <summary>Text-like</summary>
-    WEBP_PRESET_TEXT
+    WEBP_PRESET_TEXT,
 }
