@@ -48,7 +48,6 @@ using MemoryStream memoryStream = new MemoryStream(rawJpg);
 using Bitmap bmp = new Bitmap(memoryStream);
 byte[] rawWebp = WebP.EncodeLossless(bmp);
 File.WriteAllBytes("test.webp", rawWebp);
-```iteAllBytes("test.webp", rawWebP); 
 ```
 
 Encode to memory buffer in lossy with custom config and save to file
