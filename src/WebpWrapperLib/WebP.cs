@@ -66,7 +66,6 @@ public static class WebP
             }
             finally
             {
-                //Unlock the pixels
                 if (bmpData != null) bmp?.UnlockBits(bmpData);
             }
         }
@@ -144,7 +143,6 @@ public static class WebP
             }
             finally
             {
-                //Unlock the pixels
                 if (bmpData != null) bmp?.UnlockBits(bmpData);
             }
         }
@@ -191,10 +189,7 @@ public static class WebP
         }
         finally
         {
-            //Unlock the pixels
             if (bmpData != null) bmp.UnlockBits(bmpData);
-
-            //Free memory
             if (unmanagedData != null) Methods.WebPFree(unmanagedData);
         }
     }
@@ -254,10 +249,7 @@ public static class WebP
         }
         finally
         {
-            //Unlock the pixels
             if (bmpData != null) bmp.UnlockBits(bmpData);
-
-            //Free memory
             if (unmanagedData != null) Methods.WebPFree(unmanagedData);
         }
     }
@@ -388,11 +380,8 @@ public static class WebP
         }
         finally
         {
-            //Unlock the pixels
             if (sourceBmpData != null) source.UnlockBits(sourceBmpData);
             if (referenceBmpData != null) reference.UnlockBits(referenceBmpData);
-
-            //Free memory
             if (wpicSource.argb != null) Methods.WebPPictureFree(&wpicSource);
             if (wpicReference.argb != null) Methods.WebPPictureFree(&wpicReference);
         }
@@ -491,13 +480,8 @@ public static class WebP
         }
         finally
         {
-            //Free statistics memory
             if (ptrStats != null) Marshal.FreeHGlobal((IntPtr) ptrStats);
-
-            //Unlock the pixels
             if (bmpData != null) bmp.UnlockBits(bmpData);
-
-            //Free memory
             if (wpic.argb != null) Methods.WebPPictureFree(&wpic);
         }
     }
