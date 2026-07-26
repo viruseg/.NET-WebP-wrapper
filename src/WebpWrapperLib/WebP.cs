@@ -329,7 +329,6 @@ public static class WebP
 
             // Setup the source picture data, allocating the bitmap, width and height
             sourceBmpData = source.LockBits(new Rectangle(0, 0, source.Width, source.Height), ImageLockMode.ReadOnly, source.PixelFormat);
-            wpicSource = default;
             if (Methods.WebPPictureInit(&wpicSource) != 1) ThrowHelper.ThrowWebPPictureInitException();
             wpicSource.width = source.Width;
             wpicSource.height = source.Height;
