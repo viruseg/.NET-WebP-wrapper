@@ -43,12 +43,13 @@ public static class WebP
             BitmapData? bmpData = null;
             var success = false;
 
+            //Get image width and height
+            Unsafe.SkipInit(out WebPBitstreamFeatures features);
+            var result = Methods.WebPGetFeatures(pinnedWebP, (nuint) rawWebP.Length, &features);
+            if (result != VP8StatusCode.VP8_STATUS_OK) ThrowHelper.ThrowException(result.ToString());
+
             try
             {
-                //Get image width and height
-                Unsafe.SkipInit(out WebPBitstreamFeatures features);
-                var result = Methods.WebPGetFeatures(pinnedWebP, (nuint) rawWebP.Length, &features);
-                if (result != VP8StatusCode.VP8_STATUS_OK) ThrowHelper.ThrowException(result.ToString());
 
                 //Create a BitmapData and Lock all pixels to be written
                 bmp = features.HasAlpha
@@ -87,41 +88,50 @@ public static class WebP
             BitmapData? bmpData = null;
             var success = false;
 
+            Unsafe.SkipInit(out WebPDecoderConfig config);
+            if (Methods.WebPInitDecoderConfig(&config) == 0)
+            {
+                ThrowHelper.ThrowInitDecoderConfigException();
+            }
+
+            var result = Methods.WebPGetFeatures(ptrRawWebP, (nuint) rawWebP.Length, &config.input);
+            if (result != VP8StatusCode.VP8_STATUS_OK) ThrowHelper.ThrowGetFeaturesException(result);
+
+            // Validate cropping independently of scaling.
+            if (options.UseCropping)
+            {
+                if (options.crop_left < 0 ||
+                    options.crop_top < 0 ||
+                    options.crop_left + options.crop_width > config.input.Width ||
+                    options.crop_top + options.crop_height > config.input.Height)
+                    ThrowHelper.ThrowCropException();
+            }
+
+            config.options = options;
+
+            var outputWidth = options.UseCropping ? options.crop_width : config.input.Width;
+            var outputHeight = options.UseCropping ? options.crop_height : config.input.Height;
+
+            if (options.UseScaling)
+            {
+                outputWidth = options.scaled_width;
+                outputHeight = options.scaled_height;
+            }
+
+            if (outputWidth <= 0 || outputHeight <= 0) ThrowHelper.ThrowException("Computed output dimensions are invalid.");
+
             try
             {
-                Unsafe.SkipInit(out WebPDecoderConfig config);
-                if (Methods.WebPInitDecoderConfig(&config) == 0)
-                {
-                    ThrowHelper.ThrowInitDecoderConfigException();
-                }
-
-                // Read the .webp input file information
-                VP8StatusCode result;
-                if (options.UseScaling)
-                {
-                    result = Methods.WebPGetFeatures(ptrRawWebP, (nuint) rawWebP.Length, &config.input);
-                    if (result != VP8StatusCode.VP8_STATUS_OK) ThrowHelper.ThrowGetFeaturesException(result);
-
-                    //Test cropping values
-                    if (options.UseCropping)
-                    {
-                        if (options.crop_left + options.crop_width > config.input.Width || options.crop_top + options.crop_height > config.input.Height)
-                            ThrowHelper.ThrowCropException();
-                    }
-                }
-
-                config.options = options;
-
                 //Create a BitmapData and Lock all pixels to be written
                 if (config.input.HasAlpha)
                 {
                     config.output.colorspace = WEBP_CSP_MODE.MODE_bgrA;
-                    bmp = new Bitmap(config.input.Width, config.input.Height, PixelFormat.Format32bppArgb);
+                    bmp = new Bitmap(outputWidth, outputHeight, PixelFormat.Format32bppArgb);
                 }
                 else
                 {
                     config.output.colorspace = WEBP_CSP_MODE.MODE_BGR;
-                    bmp = new Bitmap(config.input.Width, config.input.Height, PixelFormat.Format24bppRgb);
+                    bmp = new Bitmap(outputWidth, outputHeight, PixelFormat.Format24bppRgb);
                 }
 
                 bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, bmp.PixelFormat);
@@ -142,11 +152,6 @@ public static class WebP
 
                 success = true;
                 return bmp;
-            }
-            catch (Exception ex)
-            {
-                ThrowHelper.ThrowDecodeException(ex);
-                return null;
             }
             finally
             {
@@ -183,19 +188,13 @@ public static class WebP
                 ? (int) Methods.WebPEncodeBGR((byte*) bmpData.Scan0, bmp.Width, bmp.Height, bmpData.Stride, quality, &unmanagedData)
                 : (int) Methods.WebPEncodeBGRA((byte*) bmpData.Scan0, bmp.Width, bmp.Height, bmpData.Stride, quality, &unmanagedData);
 
-            if (size == 0)
-                ThrowHelper.ThrowEncodeException();
+            if (size == 0) ThrowHelper.ThrowEncodeException();
 
             //Copy image compress data to output array
             var rawWebP = GC.AllocateUninitializedArray<byte>(size);
             Marshal.Copy((IntPtr) unmanagedData, rawWebP, 0, size);
 
             return rawWebP;
-        }
-        catch (Exception ex)
-        {
-            ThrowHelper.ThrowEncodeLosslyException(ex);
-            return null;
         }
         finally
         {
@@ -252,11 +251,6 @@ public static class WebP
 
             return rawWebP;
         }
-        catch (Exception ex)
-        {
-            ThrowHelper.ThrowEncodeLosslessException(ex);
-            return null;
-        }
         finally
         {
             if (bmpData != null) bmp.UnlockBits(bmpData);
@@ -290,20 +284,12 @@ public static class WebP
     {
         fixed (byte* ptrRawWebP = rawWebP)
         {
-            try
-            {
-                Unsafe.SkipInit(out WebPBitstreamFeatures features);
-                var result = Methods.WebPGetFeatures(ptrRawWebP, (nuint) rawWebP.Length, &features);
+            Unsafe.SkipInit(out WebPBitstreamFeatures features);
+            var result = Methods.WebPGetFeatures(ptrRawWebP, (nuint) rawWebP.Length, &features);
 
-                if (result != VP8StatusCode.VP8_STATUS_OK) ThrowHelper.ThrowException(result.ToString());
+            if (result != VP8StatusCode.VP8_STATUS_OK) ThrowHelper.ThrowException(result.ToString());
 
-                return features;
-            }
-            catch (Exception ex)
-            {
-                ThrowHelper.ThrowGetInfoException(ex);
-                return default;
-            }
+            return features;
         }
     }
 
@@ -323,7 +309,7 @@ public static class WebP
         {
             if (source == null) ThrowHelper.ThrowException("Source picture is void");
             if (reference == null) ThrowHelper.ThrowException("Reference picture is void");
-            if (metric_type > 2) ThrowHelper.ThrowException("Bad metric_type. Use 0 = PSNR, 1 = SSIM, 2 = LSIM");
+            if (metric_type is < 0 or > 2) ThrowHelper.ThrowException("Bad metric_type. Use 0 = PSNR, 1 = SSIM, 2 = LSIM");
             if (source.Width != reference.Width || source.Height != reference.Height) ThrowHelper.ThrowException("Source and Reference pictures have different dimensions");
 
             // Setup the source picture data, allocating the bitmap, width and height
@@ -351,7 +337,6 @@ public static class WebP
             if (Methods.WebPPictureInit(&wpicReference) != 1) ThrowHelper.ThrowWebPPictureInitException();
             wpicReference.width = reference.Width;
             wpicReference.height = reference.Height;
-            wpicReference.use_argb = 1;
 
             //Put the source bitmap contents in WebPPicture instance
             if (referenceBmpData.PixelFormat == PixelFormat.Format32bppArgb)
@@ -378,17 +363,12 @@ public static class WebP
 
             return result;
         }
-        catch (Exception ex)
-        {
-            ThrowHelper.ThrowGetPictureDistortionException(ex);
-            return null;
-        }
         finally
         {
             if (sourceBmpData != null) source.UnlockBits(sourceBmpData);
             if (referenceBmpData != null) reference.UnlockBits(referenceBmpData);
-            if (wpicSource.argb != null) Methods.WebPPictureFree(&wpicSource);
-            if (wpicReference.argb != null) Methods.WebPPictureFree(&wpicReference);
+            Methods.WebPPictureFree(&wpicSource);
+            Methods.WebPPictureFree(&wpicReference);
         }
     }
 
@@ -420,6 +400,8 @@ public static class WebP
             wpic.width = bmp.Width;
             wpic.height = bmp.Height;
 
+            wpic.use_argb = 1;
+
             long dataWebpSize;
             if (bmp.PixelFormat == PixelFormat.Format32bppArgb)
             {
@@ -435,7 +417,6 @@ public static class WebP
                 if (result != 1) ThrowHelper.ThrowWebPPictureImportBGRException();
                 dataWebpSize = (long) bmp.Width * bmp.Height * 3L + 1024;
             }
-
 
             //Set up statistics of compression
             if (info)
@@ -463,10 +444,8 @@ public static class WebP
                 wpic.writer = &MyWriter;
 
                 //compress the input samples
-                if (Methods.WebPEncode(&config, &wpic) != 1)
-                    ThrowHelper.ThrowEncodingErrorException((uint) wpic.error_code);
+                if (Methods.WebPEncode(&config, &wpic) != 1) ThrowHelper.ThrowEncodingErrorException((uint) wpic.error_code);
 
-                //Unlock the pixels
                 bmp.UnlockBits(bmpData);
                 bmpData = null!;
 
@@ -481,12 +460,6 @@ public static class WebP
             stats = info && ptrStats != null ? *ptrStats : default;
 
             return rawWebP;
-        }
-        catch (Exception ex)
-        {
-            ThrowHelper.ThrowAdvancedEncodeException(ex);
-            stats = default;
-            return null;
         }
         finally
         {
