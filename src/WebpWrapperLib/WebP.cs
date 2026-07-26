@@ -356,15 +356,15 @@ public static class WebP
             wpicReference.use_argb = 1;
 
             //Put the source bitmap contents in WebPPicture instance
-            if (sourceBmpData.PixelFormat == PixelFormat.Format32bppArgb)
+            if (referenceBmpData.PixelFormat == PixelFormat.Format32bppArgb)
             {
-                wpicSource.use_argb = 1;
+                wpicReference.use_argb = 1;
                 if (Methods.WebPPictureImportBGRA(&wpicReference, (byte*) referenceBmpData.Scan0, referenceBmpData.Stride) != 1)
                     ThrowHelper.ThrowWebPPictureImportBGRException();
             }
             else
             {
-                wpicSource.use_argb = 0;
+                wpicReference.use_argb = 0;
                 if (Methods.WebPPictureImportBGR(&wpicReference, (byte*) referenceBmpData.Scan0, referenceBmpData.Stride) != 1)
                     ThrowHelper.ThrowWebPPictureImportBGRException();
             }
