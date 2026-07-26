@@ -93,7 +93,7 @@ public static class WebP
                 VP8StatusCode result;
                 if (options.UseScaling)
                 {
-                    result = Methods.WebPGetFeatures((byte*) ptrRawWebP, (nuint) rawWebP.Length, &config.input);
+                    result = Methods.WebPGetFeatures(ptrRawWebP, (nuint) rawWebP.Length, &config.input);
                     if (result != VP8StatusCode.VP8_STATUS_OK) ThrowHelper.ThrowGetFeaturesException(result);
 
                     //Test cropping values
@@ -129,7 +129,7 @@ public static class WebP
                 config.output.is_external_memory = 1;
 
                 // Decode
-                result = Methods.WebPDecode((byte*) ptrRawWebP, (nuint) rawWebP.Length, &config);
+                result = Methods.WebPDecode(ptrRawWebP, (nuint) rawWebP.Length, &config);
                 if (result != VP8StatusCode.VP8_STATUS_OK) ThrowHelper.ThrowGetFeaturesException(result);
 
                 Methods.WebPFreeDecBuffer(&config.output);
