@@ -365,7 +365,6 @@ public static class WebP
 
             // Setup the reference picture data, allocating the bitmap, width and height
             referenceBmpData = reference.LockBits(new Rectangle(0, 0, reference.Width, reference.Height), ImageLockMode.ReadOnly, reference.PixelFormat);
-            wpicReference = default;
             if (Methods.WebPPictureInit(&wpicReference) != 1) ThrowHelper.ThrowWebPPictureInitException();
             wpicReference.width = reference.Width;
             wpicReference.height = reference.Height;
