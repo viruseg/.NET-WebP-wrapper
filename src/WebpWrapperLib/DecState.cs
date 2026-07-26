@@ -1,6 +1,6 @@
 ﻿// Wrapper for WebP format in C#. (MIT)
 // Copyright (c) 2020 Jose M. Piñeiro
-// Copyright (c) 2025 Denis Tulupov
+// Copyright (c) 2026 Denis Tulupov
 
 namespace WebpWrapper;
 
