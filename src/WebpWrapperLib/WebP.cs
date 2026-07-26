@@ -412,7 +412,7 @@ public static class WebP
                 //Put the bitmap componets in wpic
                 var result = Methods.WebPPictureImportBGRA(&wpic, (byte*) bmpData.Scan0, bmpData.Stride);
                 if (result != 1) ThrowHelper.ThrowWebPPictureImportBGRAException();
-                dataWebpSize = (long) bmp.Width * bmp.Height * 4L + 1024;
+                dataWebpSize = (long) bmp.Width * bmp.Height * 4L + 65536;
             }
             else
             {
