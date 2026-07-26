@@ -89,10 +89,7 @@ public static class WebP
             var success = false;
 
             Unsafe.SkipInit(out WebPDecoderConfig config);
-            if (Methods.WebPInitDecoderConfig(&config) == 0)
-            {
-                ThrowHelper.ThrowInitDecoderConfigException();
-            }
+            if (Methods.WebPInitDecoderConfig(&config) == 0) ThrowHelper.ThrowInitDecoderConfigException();
 
             var result = Methods.WebPGetFeatures(ptrRawWebP, (nuint) rawWebP.Length, &config.input);
             if (result != VP8StatusCode.VP8_STATUS_OK) ThrowHelper.ThrowGetFeaturesException(result);
