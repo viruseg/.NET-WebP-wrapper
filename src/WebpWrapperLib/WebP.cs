@@ -425,21 +425,20 @@ public static class WebP
             wpic.width = bmp.Width;
             wpic.height = bmp.Height;
 
-            long dataWebpSize;
             if (bmp.PixelFormat == PixelFormat.Format32bppArgb)
             {
                 //Put the bitmap componets in wpic
                 var result = Methods.WebPPictureImportBGRA(&wpic, (byte*) bmpData.Scan0, bmpData.Stride);
                 if (result != 1) ThrowHelper.ThrowWebPPictureImportBGRAException();
-                dataWebpSize = (long) bmp.Width * bmp.Height * 32L;
             }
             else
             {
                 //Put the bitmap contents in WebPPicture instance
                 var result = Methods.WebPPictureImportBGR(&wpic, (byte*) bmpData.Scan0, bmpData.Stride);
                 if (result != 1) ThrowHelper.ThrowWebPPictureImportBGRException();
-                dataWebpSize = (long) bmp.Width * bmp.Height * 24L;
             }
+
+            var dataWebpSize = (long) bmp.Width * bmp.Height;
 
             //Set up statistics of compression
             if (info)
