@@ -315,8 +315,8 @@ public static class WebP
     /// <returns>dB in the Y/U/V/Alpha/All order</returns>
     public static unsafe float[] GetPictureDistortion(Bitmap source, Bitmap reference, int metric_type)
     {
-        var wpicSource = (WebPPicture) default;
-        var wpicReference = (WebPPicture) default;
+        Unsafe.SkipInit(out WebPPicture wpicSource);
+        Unsafe.SkipInit(out WebPPicture wpicReference);
         BitmapData? sourceBmpData = null;
         BitmapData? referenceBmpData = null;
 
