@@ -18,14 +18,18 @@ namespace WebpWrapper;
 public static class WebP
 {
     /// <summary>This function will initialize the configuration according to a predefined set of parameters (referred to by 'preset') and a given quality factor</summary>
-    /// <param name="config">The WebPConfig structure</param>
     /// <param name="preset">Type of image</param>
     /// <param name="quality">Quality of compression</param>
+    /// <param name="config">The WebPConfig structure</param>
     /// <returns>0 if error</returns>
-    public static unsafe int WebPConfigInit(ref WebPConfig config, WebPPreset preset, float quality)
+    public static unsafe int WebPConfigInit(WebPPreset preset, float quality, out WebPConfig config)
     {
-        fixed (WebPConfig* configPtr = config)
-            return Methods.WebPConfigPreset(configPtr, preset, quality);
+        Unsafe.SkipInit(out WebPConfig tempConfig);
+
+        var result = Methods.WebPConfigPreset(&tempConfig, preset, quality);
+
+        config = tempConfig;
+        return result;
     }
 
     /// <summary>Decode a WebP image</summary>
