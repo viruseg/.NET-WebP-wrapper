@@ -60,10 +60,10 @@ public static class WebP
                 bmpData = bmp.LockBits(new Rectangle(0, 0, features.Width, features.Height), ImageLockMode.WriteOnly, bmp.PixelFormat);
 
                 //Uncompress the image
-                var outputSize = bmpData.Stride * features.Height;
+                var outputSize = (nuint) bmpData.Stride * (nuint) features.Height;
                 var decodedPtr = bmp.PixelFormat == PixelFormat.Format24bppRgb
-                    ? Methods.WebPDecodeBGRInto(pinnedWebP, (nuint) rawWebp.Length, (byte*) bmpData.Scan0, (nuint) outputSize, bmpData.Stride)
-                    : Methods.WebPDecodeBGRAInto(pinnedWebP, (nuint) rawWebp.Length, (byte*) bmpData.Scan0, (nuint) outputSize, bmpData.Stride);
+                    ? Methods.WebPDecodeBGRInto(pinnedWebP, (nuint) rawWebp.Length, (byte*) bmpData.Scan0, outputSize, bmpData.Stride)
+                    : Methods.WebPDecodeBGRAInto(pinnedWebP, (nuint) rawWebp.Length, (byte*) bmpData.Scan0, outputSize, bmpData.Stride);
 
                 if (decodedPtr == null) ThrowHelper.ThrowException("Failed to decode WebP image.");
 
