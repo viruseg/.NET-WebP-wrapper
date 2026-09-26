@@ -52,7 +52,6 @@ public static class WebP
 
             try
             {
-
                 //Create a BitmapData and Lock all pixels to be written
                 bmp = features.HasAlpha
                     ? new Bitmap(features.Width, features.Height, PixelFormat.Format32bppArgb)
@@ -469,7 +468,7 @@ public static class WebP
     [UnmanagedCallersOnly(CallConvs = [typeof(CallConvCdecl)])]
     private static unsafe int MyWriter(byte* data, nuint dataSize, WebPPicture* picture)
     {
-        var state = (EncodeState*)picture->custom_ptr;
+        var state = (EncodeState*) picture->custom_ptr;
 
         if (state->Position + dataSize > state->Capacity)
             return 0;
