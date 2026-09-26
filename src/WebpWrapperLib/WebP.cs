@@ -149,13 +149,12 @@ public static class WebP
                 result = Methods.WebPDecode(ptrRawWebp, (nuint) rawWebp.Length, &config);
                 if (result != VP8StatusCode.VP8_STATUS_OK) ThrowHelper.ThrowGetFeaturesException(result);
 
-                Methods.WebPFreeDecBuffer(&config.output);
-
                 success = true;
                 return bmp;
             }
             finally
             {
+                Methods.WebPFreeDecBuffer(&config.output);
                 if (bmpData != null) bmp?.UnlockBits(bmpData);
                 if (!success) bmp?.Dispose();
             }
@@ -384,7 +383,7 @@ public static class WebP
     {
         var wpic = (WebPPicture) default;
         BitmapData? bmpData = null;
-        WebPAuxStats* ptrStats = null;
+        WebPAuxStats localStats = default;
         try
         {
             //Validate the configuration
@@ -423,13 +422,11 @@ public static class WebP
             //Set up statistics of compression
             if (info)
             {
-                ptrStats = (WebPAuxStats*) Marshal.AllocHGlobal(sizeof(WebPAuxStats));
-                *ptrStats = default;
-                wpic.stats = ptrStats;
+                wpic.stats = &localStats;
             }
 
             byte[] rawWebp;
-            var dataWebpPtr = Marshal.AllocHGlobal((nint) dataWebpSize);
+            var dataWebpPtr = NativeMemory.Alloc((nuint) dataWebpSize);
 
             try
             {
@@ -455,18 +452,17 @@ public static class WebP
             }
             finally
             {
-                Marshal.FreeHGlobal(dataWebpPtr);
+                NativeMemory.Free(dataWebpPtr);
             }
 
-            stats = info && ptrStats != null ? *ptrStats : default;
+            stats = info ? localStats : default;
 
             return rawWebp;
         }
         finally
         {
-            if (ptrStats != null) Marshal.FreeHGlobal((IntPtr) ptrStats);
             if (bmpData != null) bmp.UnlockBits(bmpData);
-            if (wpic.argb != null) Methods.WebPPictureFree(&wpic);
+            Methods.WebPPictureFree(&wpic);
         }
     }
 
