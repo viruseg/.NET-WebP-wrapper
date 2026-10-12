@@ -17,7 +17,7 @@ Exposes Simple Decoding and Encoding API, Advanced Decoding and Encoding API (wi
 
 The wrapper is in safe managed code in one class. No need for external dll except libwebp_x64.dll (included). The wrapper work only 64-bit Windows system.
 
-## Decompress Functions:ap bmp = webp.Load("test.webp");
+## Decompress Functions
 Decode WebP to bitmap
 ```C#
 byte[] rawWebp = File.ReadAllBytes("test.webp");
@@ -31,7 +31,7 @@ using Bitmap bmp = WebP.Decode(rawWebp, new WebPDecoderOptions { UseThreads = tr
 ```
 
 
-## Compress Functions:
+## Compress Functions
 Encode to memory buffer in lossy mode with quality 75 and save to file
 ```C#
 byte[] rawJpg = File.ReadAllBytes("test.jpg");
@@ -64,7 +64,7 @@ byte[] rawWebp = WebP.Encode(bmp, config);
 File.WriteAllBytes("test.webp", rawWebp);
 ```
 
-## Another Functions:	
+## Another Functions
 Get version of libwebp.dll
 ```C#
 string version = "libwebp.dll v" + WebP.GetVersion();
