@@ -14,8 +14,9 @@
         <RepositoryUrl>https://github.com/viruseg/.NET-WebP-wrapper</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageTags>webp, webp wrapper, csharp, c-sharp, C#,</PackageTags>
-        <Description>.NET 10.0, .NET 9.0, .NET 8.0, libwebp_x64.dll v1.6.0. Wrapper for libwebp in C#. The most complete wrapped in pure managed C#. Exposes Simple Decoding API, Simple Encoding API, Advanced Encoding API (with statistics of compression), Get version library and WebPGetFeatures (info of any WebP file). The wrapper work only 64 bit system.</Description>
+        <Description>.NET 11.0, .NET 10.0, .NET 9.0, .NET 8.0, libwebp_x64.dll v1.6.0. Wrapper for libwebp in C#. The most complete wrapped in pure managed C#. Exposes Simple Decoding API, Simple Encoding API, Advanced Encoding API (with statistics of compression), Get version library and WebPGetFeatures (info of any WebP file). The wrapper work only 64 bit system.</Description>
         <PackageReleaseNotes>
+            1.6.7: Added .NET 11
             1.6.6: The memory leak has been fixed.
             1.6.5: BREAKING CHANGES. The wrapper API has been completely redesigned and is no longer compatible with the old code (see the README). The code has been rewritten, and critical and minor issues have been fixed.
             1.6.3: Replacing DllImport with LibraryImport
@@ -26,13 +27,13 @@
             1.0.6: .NET 9.0, .NET 8.0, libwebp.dll v1.5.0
             1.0.5: .NET 9.0, libwebp.dll v1.5.0
         </PackageReleaseNotes>
-        <Version>1.6.6</Version>
-        <AssemblyVersion>1.6.6</AssemblyVersion>
+        <Version>1.6.7</Version>
+        <AssemblyVersion>1.6.7</AssemblyVersion>
         <PackageIcon>logo.png</PackageIcon>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <IncludeContentInPack>true</IncludeContentInPack>
-        <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
+        <TargetFrameworks>net8.0;net9.0;net10.0;net11.0</TargetFrameworks>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -45,7 +46,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="System.Drawing.Common" Version="10.0.10" />
+        <PackageReference Include="System.Drawing.Common" Version="11.0.0" />
     </ItemGroup>
 
     <ItemGroup>
